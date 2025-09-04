@@ -29,7 +29,7 @@ class Player:
         # Create separate channels to allow chords and melodies to play simultaneously.
         self.chords_channel = pygame.mixer.Channel(Channels.CHORDS_CHANNEL.value)
         self.melody_channel = pygame.mixer.Channel(Channels.MELODY_CHANNEL.value)
-        self.samples = load_samples(sample_config, AudioCompressor())
+        self.samples = load_samples(sample_config)
 
         self.history = {}
 

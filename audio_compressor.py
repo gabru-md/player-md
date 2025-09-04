@@ -10,7 +10,7 @@ class AudioCompressor:
     real-time processor and should be used to pre-process samples before playback.
     """
 
-    def __init__(self, threshold_db=-20.0, ratio=4.0, attack_ms=10, release_ms=100):
+    def __init__(self, threshold_db=-20.0, ratio=4.0, attack_ms=10, release_ms=100, gain=1.0):
         """
         Initializes the compressor with key parameters.
 
@@ -24,7 +24,7 @@ class AudioCompressor:
         self.ratio = ratio
         self.attack_ms = attack_ms
         self.release_ms = release_ms
-        self.gain = 1.0
+        self.gain = gain
 
     def process_sound(self, sound):
         """
