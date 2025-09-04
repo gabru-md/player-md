@@ -4,7 +4,8 @@ from signature import make_signature_key
 
 # this needs to be replaced
 AVAILABLE_CHORDS = ['C_maj_chord', 'G_maj_chord', 'A_min_chord', 'F_maj_chord', 'D_min_chord', 'E_min_chord']
-AVAILABLE_NOTES = ['C_note', 'E_note', 'G_note', 'C5_note', 'F_note', 'A_note', 'A5_note', 'D_note', 'B_note']
+AVAILABLE_NOTES = ['C_note', 'E_note', 'G_note', 'C5_note']
+# AVAILABLE_NOTES = ['C_note', 'E_note', 'G_note', 'C5_note', 'F_note', 'A_note', 'A5_note', 'D_note', 'B_note']
 
 
 class NarrativeGenerator:

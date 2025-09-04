@@ -1,6 +1,11 @@
-## player-md
+# Radio-MD
 
-This is to cater to my love for music and technology together. I have few instruments and I like my ukulele the most.
-`player-md` (by `gabru-md`) generates music using my instruments based off the rhythmic patterns I like.
+`radio-md` (by `gabru-md`) combines my love for music and technology.
+It generates calming music using my instruments, based on the rhythmic patterns I enjoy.
 
-Simply run the `main.py` to enjoy some calm music :)
+My ukulele is my favorite instrument, and this project brings it to life in code.
+
+### Usage
+```sh
+python3 main.py --bpm 124 --bars 8 --narratives 10 --repeat 2
+```
