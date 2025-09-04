@@ -88,9 +88,11 @@ class Player:
             sound = self.samples.get(event['name'])
             if sound:
                 if event['type'] == 'chord':
+                    self.melody_channel.stop() # to counter overlap
                     self.chords_channel.play(sound)
                     # print(f"Chord: {event['name']}")
                 else:
+                    self.melody_channel.stop() # to counter overlap
                     self.melody_channel.play(sound)
                     # print(f"  Note: {event['name']}")
 

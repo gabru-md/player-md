@@ -13,7 +13,7 @@ class NarrativeGenerator:
         self.rhythm_patterns = [
             [],
             # Quarter notes
-            [0, 1, 2, 3],
+            [0.5, 1.5, 3.5],
             # Half notes
             [0, 2],
             # Dotted quarter and eighth note
@@ -37,9 +37,14 @@ class NarrativeGenerator:
             # Eighth notes
             [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5],
             # Dotted rhythms
-            [0, 0.75, 1.5, 2.25, 3, 3.75],
+            [0.75, 1.5, 2.25, 3.75],
 
-            [0, 1, 2, 3]
+            # [0.25, 1.25, 2.25, 3.25]
+        ]
+
+        self.release_rhythm_patterns = [
+            [0, 2],
+            [0]
         ]
 
         # Chord progression patterns based on scale degrees (e.g., 0=root, 3=fourth)
@@ -51,9 +56,18 @@ class NarrativeGenerator:
         }
 
         # Rhythm for the chords.
-        self.simple_chord_rhythm = [0]
-        self.release_chord_rhythm = [0, 2]
-        self.buildup_chord_rhythm = [0, 2, 3]
+        self.simple_chord_rhythm_patterns = [
+            [0, 2],
+            [0, 3]
+        ]
+        self.release_chord_rhythm_patterns = [
+            [0],
+            [0, 2]
+        ]
+        self.buildup_chord_rhythm_patterns = [
+            [0, 1, 2, 3],
+            [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5]
+        ]
 
     def generate_narrative(self, key, bars=8):
         """
@@ -82,37 +96,44 @@ class NarrativeGenerator:
             # Select a random rhythm pattern for each bar
             melody_rhythm = random.choice(self.rhythm_patterns)
             melody_notes = [(random.choice(notes_in_key), offset) for offset in melody_rhythm]
-            chords = [(chord_progression[bar], offset) for offset in self.simple_chord_rhythm]
+            simple_chord_rhythm = random.choice(self.simple_chord_rhythm_patterns)
+            chords = [(chord_progression[bar], offset) for offset in simple_chord_rhythm]
             narrative_data.append(Bar(chords, melody_notes))
 
         # --- Section 2: Silence (Bar 3) ---
         melody_rhythm = random.choice(self.silence_rhythm_patterns)
         melody_notes = [(random.choice(notes_in_key), offset) for offset in melody_rhythm]
-        chords = [(chord_progression[2], offset) for offset in self.simple_chord_rhythm]
+        simple_chord_rhythm = random.choice(self.simple_chord_rhythm_patterns)
+        chords = [(chord_progression[2], offset) for offset in simple_chord_rhythm]
         narrative_data.append(Bar(chords, melody_notes))
 
         # --- Section 3: Conversation (Bar 4) ---
         melody_rhythm = random.choice(self.rhythm_patterns)
         melody_notes = [(random.choice(notes_in_key), offset) for offset in melody_rhythm]
-        chords = [(chord_progression[3], offset) for offset in self.simple_chord_rhythm]
+        simple_chord_rhythm = random.choice(self.simple_chord_rhythm_patterns)
+        chords = [(chord_progression[3], offset) for offset in simple_chord_rhythm]
         narrative_data.append(Bar(chords, melody_notes))
 
         # --- Section 4: Silence (Bar 5) ---
         melody_rhythm = random.choice(self.silence_rhythm_patterns)
         melody_notes = [(random.choice(notes_in_key), offset) for offset in melody_rhythm]
-        chords = [(chord_progression[4], offset) for offset in self.simple_chord_rhythm]
+        simple_chord_rhythm = random.choice(self.simple_chord_rhythm_patterns)
+        chords = [(chord_progression[4], offset) for offset in simple_chord_rhythm]
         narrative_data.append(Bar(chords, melody_notes))
 
         # --- Section 5: Buildup & Tension (Bars 6-7) ---
         for bar in range(2):
             melody_rhythm = random.choice(self.buildup_rhythm_patterns)
             melody_notes = [(random.choice(notes_in_key), offset) for offset in melody_rhythm]
-            chords = [(chord_progression[5 + bar], offset) for offset in self.buildup_chord_rhythm]
+            buildup_chord_rhythm = random.choice(self.buildup_chord_rhythm_patterns)
+            chords = [(chord_progression[5 + bar], offset) for offset in buildup_chord_rhythm]
             narrative_data.append(Bar(chords, melody_notes))
 
         # --- Section 6: Release (Bar 8) ---
-        melody_notes = [(random.choice(notes_in_key), 0)]
-        chords = [(chord_progression[7], offset) for offset in self.release_chord_rhythm]
+        melody_rhythm = random.choice(self.release_rhythm_patterns)
+        melody_notes = [(random.choice(notes_in_key), offset) for offset in melody_rhythm]
+        release_chord_rhythm = random.choice(self.release_chord_rhythm_patterns)
+        chords = [(chord_progression[7], offset) for offset in release_chord_rhythm]
         narrative_data.append(Bar(chords, melody_notes))
 
         return narrative_data, make_signature_key(narrative_data)
