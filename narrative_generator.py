@@ -2,10 +2,9 @@ import random
 from bar import Bar
 from signature import make_signature_key
 
-# --- Music Theory Setup (reused from our previous discussions) ---
-# A list of available chords and notes to choose from randomly.
-AVAILABLE_CHORDS = ['C_maj_chord', 'G_maj_chord', 'A_min_chord', 'F_maj_chord']
-AVAILABLE_NOTES = ['C_note', 'E_note', 'G_note', 'C5_note']
+# this needs to be replaced
+AVAILABLE_CHORDS = ['C_maj_chord', 'G_maj_chord', 'A_min_chord', 'F_maj_chord', 'D_min_chord', 'E_min_chord']
+AVAILABLE_NOTES = ['C_note', 'E_note', 'G_note', 'C5_note', 'F_note', 'A_note', 'A5_note', 'D_note', 'B_note']
 
 
 class NarrativeGenerator:

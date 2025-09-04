@@ -1,10 +1,17 @@
 {
+  "A_note": "sample/A_note.wav",
+  "A5_note": "sample/A5_note.wav",
+  "B_note": "sample/B_note.wav",
   "C_note": "sample/C_note.wav",
+  "D_note": "sample/D_note.wav",
   "E_note": "sample/E_note.wav",
+  "F_note": "sample/F_note.wav",
   "G_note": "sample/G_note.wav",
   "C5_note": "sample/C5_note.wav",
   "C_maj_chord": "sample/C_maj_chord.wav",
   "G_maj_chord": "sample/G_maj_chord.wav",
   "F_maj_chord": "sample/F_maj_chord.wav",
-  "A_min_chord": "sample/A_min_chord.wav"
+  "A_min_chord": "sample/A_min_chord.wav",
+  "E_min_chord": "sample/E_min_chord.wav",
+  "D_min_chord": "sample/D_min_chord.wav"
 }
