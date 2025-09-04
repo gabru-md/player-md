@@ -27,12 +27,11 @@ def make_signature_key(narrative_data: [Bar] = None):
 
         key_parts.append(":".join(bar_key_parts))
 
-    return "_".join(key_parts)
+    return "_^_".join(key_parts)
 
 
 def empty_replace(s: str, p: str):
     return s.replace(p, "")
-
 
 def parse_signature_key(key: str) -> list[Bar]:
     """
@@ -42,7 +41,7 @@ def parse_signature_key(key: str) -> list[Bar]:
         return []
 
     narrative_data = []
-    bar_strings = key.split('_')
+    bar_strings = key.split('_^_')
 
     for bar_str in bar_strings:
         parts = bar_str.split(':')
@@ -52,13 +51,13 @@ def parse_signature_key(key: str) -> list[Bar]:
         if len(parts) > 0 and parts[0]:
             chord_str = parts[0].split(',')
             for c in chord_str:
-                name, offset = c.split('-')
+                name, offset = c.rsplit('-', 1)
                 chords.append((name + '_chord', float(offset)))
 
         if len(parts) > 1 and parts[1]:
             melody_str = parts[1].split('|')
             for m in melody_str:
-                name, offset = m.split('-')
+                name, offset = m.rsplit('-', 1)
                 melody_notes.append((name + '_note', float(offset)))
 
         narrative_data.append(Bar(chords, melody_notes))
