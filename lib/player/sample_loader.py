@@ -1,7 +1,7 @@
 import pygame
 import json
 
-from audio_compressor import AudioCompressor
+from lib.audio.audio_compressor import AudioCompressor
 
 
 def load_samples(sample_path, compressor: AudioCompressor = AudioCompressor(), note_compressor: AudioCompressor = AudioCompressor(gain=0.8)):

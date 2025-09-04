@@ -1,7 +1,7 @@
 import json
 import time
 from enum import Enum
-from lib.sample_loader import load_samples
+from lib.player.sample_loader import load_samples
 
 import pygame
 
@@ -108,7 +108,7 @@ class Player:
 
     def save_history(self, file_name=None):
         if file_name is None:
-            file_name = f"history/history_{time.time()}.json"
+            file_name = f"history/{time.time()}.json"
         with open(file_name, 'w') as history_file:
             json.dump(self.history, history_file)
         print(f"History saved to {file_name}")

@@ -1,7 +1,7 @@
 import argparse
 import json
 
-from player import Player
+from lib.player.player import Player
 from lib.signature import parse_signature_key
 
 
@@ -15,7 +15,7 @@ def main():
 
     player = Player(bpm=args.bpm)
 
-    history_file_name = f"history/history_{args.file}.json"
+    history_file_name = f"history/{args.file}.json"
 
     try:
         history_data = None
@@ -32,6 +32,9 @@ def main():
 
         while True:
             user_input = input("Command: ")
+
+            if user_input == "exit":
+                break
 
             try:
                 command, idx = user_input.split(" ")

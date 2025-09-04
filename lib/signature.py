@@ -1,4 +1,4 @@
-from bar import Bar
+from lib.bar import Bar
 
 
 def make_signature_key(narrative_data: [Bar] = None):
