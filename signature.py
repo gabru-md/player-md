@@ -16,12 +16,12 @@ def make_signature_key(narrative_data: [Bar] = None):
         bar_key_parts = []
 
         # Encode chords and their offsets.
-        chord_parts = [f"{empty_replace(c[0], '_chord')}-{int(c[1])}" for c in bar_data.chords]
+        chord_parts = [f"{empty_replace(c[0], '_chord')}-{float(c[1])}" for c in bar_data.chords]
         if chord_parts:
             bar_key_parts.append(",".join(chord_parts))
 
         # Encode melody notes and their offsets.
-        melody_parts = [f"{empty_replace(m[0], '_note')}-{int(m[1])}" for m in bar_data.melody_notes]
+        melody_parts = [f"{empty_replace(m[0], '_note')}-{float(m[1])}" for m in bar_data.melody_notes]
         if melody_parts:
             bar_key_parts.append("|".join(melody_parts))
 
