@@ -1,15 +1,22 @@
 import pygame
 import json
 
-def load_samples(sample_path):
+from audio_compressor import AudioCompressor
+
+
+def load_samples(sample_path, compressor: AudioCompressor = None):
     """
     Loads sample from a dictionary of 'note_name': 'file_path'.
     In a real scenario, this would load the actual audio data into memory.
     """
     with open(sample_path, 'r') as samples_json:
         samples = json.load(samples_json)
-    print("Loading sample...")
+    # print("Loading sample...")
     for name, path in samples.items():
-        samples[name] = pygame.mixer.Sound(path)
-        print(f"Loaded: {name} from {path}")
+        sound = pygame.mixer.Sound(path)
+        if compressor:
+            sound = compressor.process_sound(sound)
+
+        samples[name] = sound
+        # print(f"Loaded: {name} from {path}")
     return samples

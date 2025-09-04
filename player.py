@@ -1,6 +1,6 @@
 from enum import Enum
 from sample_loader import load_samples
-
+from audio_compressor import AudioCompressor
 import pygame
 
 
@@ -27,13 +27,15 @@ class Player:
         # Create separate channels to allow chords and melodies to play simultaneously.
         self.chords_channel = pygame.mixer.Channel(Channels.CHORDS_CHANNEL.value)
         self.melody_channel = pygame.mixer.Channel(Channels.MELODY_CHANNEL.value)
-        self.samples = load_samples(sample_config)
+        self.samples = load_samples(sample_config, AudioCompressor())
+
+        self.history = {}
 
     def set_phase_shift(self, shift_in_beats):
         """Allows for a global timing shift, useful for syncing."""
         self.phase_shift_beats = shift_in_beats
 
-    def play_music(self, narrative_data):
+    def play_music(self, narrative_data, signature_key=None):
         """
         Plays the generated music by iterating through the structured narrative data.
 
@@ -42,8 +44,9 @@ class Player:
 
         Args:
             narrative_data: A list of Bar objects containing chord and melody info.
+            signature_key: signature of the song
         """
-        print(f"Playing at {self.bpm} BPM...")
+        print(f"Playing {signature_key} at {self.bpm} BPM...")
         start_time_ms = pygame.time.get_ticks()
 
         bar_duration_ms = 4 * self.beat_duration_ms
@@ -57,14 +60,14 @@ class Player:
             if time_to_wait_for_bar > 0:
                 pygame.time.wait(int(time_to_wait_for_bar))
 
-            print(f"Bar: {bar_index + 1}")
+            # print(f"Bar: {bar_index + 1}")
 
             # --- Chord Playback ---
             # Play the chord at the very beginning of the bar.
             chord_sound = self.samples.get(bar_data.chord)
             if chord_sound:
                 self.chords_channel.play(chord_sound)
-                print(f"Chord: {bar_data.chord}")
+                # print(f"Chord: {bar_data.chord}")
 
             # --- Melody Playback ---
             # Iterate through the list of melody notes and their offsets for this bar.
@@ -82,7 +85,15 @@ class Player:
                 note_sound = self.samples.get(note_name)
                 if note_sound:
                     self.melody_channel.play(note_sound)
-                    print(f"  Note: {note_name}")
+                    # print(f"  Note: {note_name}")
 
-        print("\nFinished playing music. Press any key to quit.")
-        pygame.time.wait(2000)
+
+        if signature_key:
+            if signature_key in self.history:
+                self.history[signature_key]['played'] += 1
+            else:
+                self.history[signature_key] = {'played': 0, 'liked':False, 'disliked': False}
+
+
+            print(self.history)
+
