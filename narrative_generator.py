@@ -1,33 +1,10 @@
 import random
-
-
-class Bar:
-    def __init__(self, chord, melody_notes):
-        self.chord = chord
-        self.melody_notes = melody_notes
-
-
-def make_signature_key(narrative_data: [Bar] = None):
-    if narrative_data is None:
-        return None
-    key = ""
-    for data in narrative_data:
-        bar_data: Bar = data
-        key += empty_replace(bar_data.chord, "_chord")
-
-        for note, rhythm in bar_data.melody_notes:
-            key += empty_replace(note, "_note")
-
-    return key
-
-
-def empty_replace(s: str, p: str):
-    return s.replace(p, "")
-
+from bar import Bar
+from signature import make_signature_key
 
 # --- Music Theory Setup (reused from our previous discussions) ---
 # A list of available chords and notes to choose from randomly.
-AVAILABLE_CHORDS = ['C_maj_chord', 'G_maj_chord']
+AVAILABLE_CHORDS = ['C_maj_chord', 'G_maj_chord', 'A_min_chord', 'F_maj_chord']
 AVAILABLE_NOTES = ['C_note', 'E_note', 'G_note', 'C5_note']
 
 
@@ -39,11 +16,17 @@ class NarrativeGenerator:
 
     def __init__(self):
         # Rhythm for the "conversation" sections (simple, sparse)
-        self.conversation_rhythm = [1.5, 2.5, 3, 3.5]
-        self.silence_rhythm = [2, 3.5]
+        self.conversation_melody_rhythm = [1, 2]
+        self.silence_melody_rhythm = [3.5]
 
         # Rhythm for the "buildup" and "tension" sections (fast, dense)
-        self.buildup_rhythm = [0, 1, 1.5, 2, 2.5, 3.5]
+        self.buildup_melody_rhythm = [0, 1, 1.5, 2, 2.5, 3.5]
+
+        # Rhythm for the chords. We'll use a simple "one-per-bar" for now,
+        # but the structure allows for more.
+        self.simple_chord_rhythm = [0]
+        self.release_chord_rhythm = [0, 2]
+        self.buildup_chord_rhythm = [0, 2, 3]
 
     def generate_narrative(self, bars=8):
         """
@@ -57,45 +40,35 @@ class NarrativeGenerator:
         chord_progression = [random.choice(AVAILABLE_CHORDS) for _ in range(bars)]
 
         # --- Section 1: Conversation (Bars 1-2) ---
-        # print("Generating: Conversation (Bars 1-2)")
         for bar in range(2):
-            melody_notes = []
-            for offset in self.conversation_rhythm:
-                melody_notes.append((random.choice(AVAILABLE_NOTES), offset))
-            narrative_data.append(Bar(chord_progression[bar], melody_notes))
+            melody_notes = [(random.choice(AVAILABLE_NOTES), offset) for offset in self.conversation_melody_rhythm]
+            chords = [(chord_progression[bar], offset) for offset in self.simple_chord_rhythm]
+            narrative_data.append(Bar(chords, melody_notes))
 
         # --- Section 2: Silence (Bar 3) ---
-        # print("Generating: Silence (Bar 3)")
-        melody_notes = []
-        for offset in self.silence_rhythm:
-            melody_notes.append((random.choice(AVAILABLE_NOTES), offset))
-        narrative_data.append(Bar(chord_progression[2], melody_notes))  # silence
+        melody_notes = [(random.choice(AVAILABLE_NOTES), offset) for offset in self.silence_melody_rhythm]
+        chords = [(chord_progression[2], offset) for offset in self.simple_chord_rhythm]
+        narrative_data.append(Bar(chords, melody_notes))
 
         # --- Section 3: Conversation (Bar 4) ---
-        # print("Generating: Conversation (Bar 4)")
-        melody_notes = []
-        for offset in self.conversation_rhythm:
-            melody_notes.append((random.choice(AVAILABLE_NOTES), offset))
-        narrative_data.append(Bar(chord_progression[3], melody_notes))
+        melody_notes = [(random.choice(AVAILABLE_NOTES), offset) for offset in self.conversation_melody_rhythm]
+        chords = [(chord_progression[3], offset) for offset in self.simple_chord_rhythm]
+        narrative_data.append(Bar(chords, melody_notes))
 
         # --- Section 4: Silence (Bar 5) ---
-        # print("Generating: Silence (Bar 5)")
-        melody_notes = []
-        for offset in self.silence_rhythm:
-            melody_notes.append((random.choice(AVAILABLE_NOTES), offset))
-        narrative_data.append(Bar(chord_progression[2], melody_notes))  # silence  # Empty melody list for silence
+        melody_notes = [(random.choice(AVAILABLE_NOTES), offset) for offset in self.silence_melody_rhythm]
+        chords = [(chord_progression[4], offset) for offset in self.simple_chord_rhythm]
+        narrative_data.append(Bar(chords, melody_notes))
 
         # --- Section 5: Buildup & Tension (Bars 6-7) ---
-        # print("Generating: Buildup & Tension (Bars 6-7)")
         for bar in range(2):
-            melody_notes = []
-            for offset in self.buildup_rhythm:
-                melody_notes.append((random.choice(AVAILABLE_NOTES), offset))
-            narrative_data.append(Bar(chord_progression[5 + bar], melody_notes))
+            melody_notes = [(random.choice(AVAILABLE_NOTES), offset) for offset in self.buildup_melody_rhythm]
+            chords = [(chord_progression[5 + bar], offset) for offset in self.buildup_chord_rhythm]
+            narrative_data.append(Bar(chords, melody_notes))
 
         # --- Section 6: Release (Bar 8) ---
-        # print("Generating: Release (Bar 8)")
-        melody_notes = [(random.choice(AVAILABLE_NOTES), 0)]  # A single note on the first beat
-        narrative_data.append(Bar(chord_progression[7], melody_notes))
+        melody_notes = [(random.choice(AVAILABLE_NOTES), 0)]
+        chords = [(chord_progression[7], offset) for offset in self.release_chord_rhythm]
+        narrative_data.append(Bar(chords, melody_notes))
 
         return narrative_data, make_signature_key(narrative_data)

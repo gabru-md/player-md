@@ -1,6 +1,9 @@
+import json
+import time
 from enum import Enum
 from sample_loader import load_samples
 from audio_compressor import AudioCompressor
+
 import pygame
 
 
@@ -16,7 +19,6 @@ class Player:
 
         Args:
             bpm (int): Beats per minute for tempo control.
-            bars (int): The total number of bars to play.
             sample_config (str): The path to the JSON file with sample mappings.
         """
         self.bpm = bpm
@@ -49,51 +51,67 @@ class Player:
         print(f"Playing {signature_key} at {self.bpm} BPM...")
         start_time_ms = pygame.time.get_ticks()
 
-        bar_duration_ms = 4 * self.beat_duration_ms
-
+        # To manage both chord and melody timing, we will flatten both into a single,
+        # chronologically sorted list of events.
+        event_list = []
         for bar_index, bar_data in enumerate(narrative_data):
-            # This is the expected start time for the current bar.
-            current_bar_start_time = start_time_ms + (bar_index * bar_duration_ms)
+            bar_start_beat = bar_index * 4
 
-            # Wait until it's the correct time for this bar to begin.
-            time_to_wait_for_bar = current_bar_start_time - pygame.time.get_ticks()
-            if time_to_wait_for_bar > 0:
-                pygame.time.wait(int(time_to_wait_for_bar))
+            # Add all chord events for this bar to the event list
+            # We now assume bar_data.chords is a list of tuples: [('chord_name', beat_offset)]
+            for chord_name, beat_offset in bar_data.chords:
+                event_list.append({
+                    'type': 'chord',
+                    'name': chord_name,
+                    'beat_time': bar_start_beat + beat_offset
+                })
 
-            # print(f"Bar: {bar_index + 1}")
-
-            # --- Chord Playback ---
-            # Play the chord at the very beginning of the bar.
-            chord_sound = self.samples.get(bar_data.chord)
-            if chord_sound:
-                self.chords_channel.play(chord_sound)
-                # print(f"Chord: {bar_data.chord}")
-
-            # --- Melody Playback ---
-            # Iterate through the list of melody notes and their offsets for this bar.
+            # Add all melody events for this bar to the event list
+            # We assume bar_data.melody_notes is a list of tuples: [('note_name', beat_offset)]
             for note_name, beat_offset in bar_data.melody_notes:
-                # Calculate the precise time to play the note from the beginning of the song.
-                # `(bar_index * 4)` gets the total beats from previous bars.
-                # `beat_offset` gets the position within the current bar.
-                expected_play_time_ms = start_time_ms + ((bar_index * 4 + beat_offset) * self.beat_duration_ms)
+                event_list.append({
+                    'type': 'melody',
+                    'name': note_name,
+                    'beat_time': bar_start_beat + beat_offset
+                })
 
-                # Wait until it's time to play the next note.
-                time_to_wait = expected_play_time_ms - pygame.time.get_ticks()
-                if time_to_wait > 0:
-                    pygame.time.wait(int(time_to_wait))
+        # Sort all events by their beat time to ensure correct playback order
+        event_list.sort(key=lambda x: x['beat_time'])
 
-                note_sound = self.samples.get(note_name)
-                if note_sound:
-                    self.melody_channel.play(note_sound)
-                    # print(f"  Note: {note_name}")
+        # Now iterate through the sorted events and play them
+        for event in event_list:
+            expected_play_time_ms = start_time_ms + (event['beat_time'] * self.beat_duration_ms)
 
+            time_to_wait = expected_play_time_ms - pygame.time.get_ticks()
+            if time_to_wait > 0:
+                pygame.time.wait(int(time_to_wait))
+
+            sound = self.samples.get(event['name'])
+            if sound:
+                if event['type'] == 'chord':
+                    self.chords_channel.play(sound)
+                    # print(f"Chord: {event['name']}")
+                else:
+                    self.melody_channel.play(sound)
+                    # print(f"  Note: {event['name']}")
+
+        # Add a final wait at the end of the song to ensure all notes are played
+        total_beats = len(narrative_data) * 4
+        final_wait_time = start_time_ms + (total_beats * self.beat_duration_ms) - pygame.time.get_ticks()
+        if final_wait_time > 0:
+            pygame.time.wait(int(final_wait_time))
 
         if signature_key:
             if signature_key in self.history:
                 self.history[signature_key]['played'] += 1
             else:
-                self.history[signature_key] = {'played': 0, 'liked':False, 'disliked': False}
+                self.history[signature_key] = {'played': 0, 'liked': False, 'disliked': False}
 
+    def save_history(self):
+        file_name = f"history/history_{time.time()}.json"
+        with open(file_name, 'w') as history_file:
+            json.dump(self.history, history_file)
+        print(f"History saved to {file_name}")
 
-            print(self.history)
-
+    def stop_mixer(self):
+        pygame.mixer.quit()
