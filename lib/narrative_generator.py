@@ -35,9 +35,9 @@ class NarrativeGenerator:
         self.buildup_rhythm_patterns = [
             [],
             # Eighth notes
-            [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5],
+            # [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5],
             # Dotted rhythms
-            [0.75, 1.5, 2.25, 3.75],
+            # [0.75, 1.5, 2.25, 3.75],
 
             # [0.25, 1.25, 2.25, 3.25]
         ]
@@ -66,7 +66,7 @@ class NarrativeGenerator:
         ]
         self.buildup_chord_rhythm_patterns = [
             [0, 1, 2, 3],
-            [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5]
+            # [0, 1, 1.5, 2, 2.5, 3]
         ]
 
     def generate_narrative(self, key, bars=8):

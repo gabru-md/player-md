@@ -23,7 +23,8 @@ class Player:
         self.bpm = bpm
         self.beat_duration_ms = (60 / bpm) * 1000
         self.phase_shift_beats = 0
-        pygame.mixer.init()
+
+        self.start_mixer()
 
         # Create separate channels to allow chords and melodies to play simultaneously.
         self.chords_channel = pygame.mixer.Channel(Channels.CHORDS_CHANNEL.value)
@@ -31,12 +32,14 @@ class Player:
         self.samples = load_samples(sample_config)
 
         self.history = {}
+        self.currently_playing = None
+        self.currently_playing_key = None
 
     def set_phase_shift(self, shift_in_beats):
         """Allows for a global timing shift, useful for syncing."""
         self.phase_shift_beats = shift_in_beats
 
-    def play_music(self, narrative_data, signature_key=None):
+    def play_music(self, narrative_data, signature_key=None, metadata=None):
         """
         Plays the generated music by iterating through the structured narrative data.
 
@@ -48,6 +51,12 @@ class Player:
             signature_key: signature of the song
         """
         print(f"Playing {signature_key} at {self.bpm} BPM...")
+
+        self.currently_playing = signature_key
+        if metadata:
+            if 'key' in metadata:
+                self.currently_playing_key = metadata['key']
+
         start_time_ms = pygame.time.get_ticks()
 
         # To manage both chord and melody timing, we will flatten both into a single,
@@ -108,6 +117,9 @@ class Player:
             else:
                 self.history[signature_key] = {'played': 1, 'liked': False, 'disliked': False}
 
+        self.currently_playing = None
+        self.currently_playing_key = None
+
     def save_history(self, file_name=None):
         if file_name is None:
             file_name = f"history/{time.time()}.json"
@@ -117,3 +129,16 @@ class Player:
 
     def stop_mixer(self):
         pygame.mixer.quit()
+
+    def start_mixer(self):
+        pygame.mixer.init()
+
+    def like(self, signature_key):
+        if signature_key in self.history:
+            self.history[signature_key]['liked'] = True
+            self.history[signature_key]['disliked'] = False
+
+    def dislike(self, signature_key):
+        if signature_key in self.history:
+            self.history[signature_key]['disliked'] = True
+            self.history[signature_key]['liked'] = False

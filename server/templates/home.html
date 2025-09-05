@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radio-MD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-4 sm:p-8">
+
+<div class="max-w-4xl mx-auto">
+    <header class="text-center mb-10">
+        <h1 class="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 rounded-lg">
+            Radio-MD
+        </h1>
+        <p class="mt-2 text-gray-400">Your curated collection of generated music narratives.</p>
+    </header>
+
+    <main class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- History List Section -->
+        <div class="md:col-span-2 bg-gray-800 rounded-xl p-6 shadow-xl h-full">
+            <h2 class="text-2xl font-bold text-gray-200 mb-4">Saved Tracks</h2>
+            <div id="history-list" class="space-y-2">
+                <!-- History items will be dynamically generated here by the server -->
+                {% for key, song in history.items() %}
+                <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700"
+                     onclick="selectSong('{{ key }}')">
+                    <div class="flex items-center space-x-4 flex-grow min-w-0">
+                        <i class="fa-solid fa-music text-purple-400"></i>
+                        <span class="flex-grow text-sm sm:text-base truncate">{{ key }}</span>
+                    </div>
+                    <div class="flex items-center space-x-2 ml-4">
+                        <span class="text-xs text-gray-400 whitespace-nowrap">{{ song.played }} plays</span>
+                        <i class="fa-solid fa-heart {% if song.liked %}text-red-500{% else %}text-gray-500{% endif %}"></i>
+                        <i class="fa-solid fa-thumbs-down {% if song.disliked %}text-blue-500{% else %}text-gray-500{% endif %}"></i>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Now Playing & Stats Section -->
+        <div class="md:col-span-1 bg-gray-800 rounded-xl p-6 shadow-xl sticky top-8">
+            <h2 class="text-2xl font-bold text-gray-200 mb-4">Now Playing</h2>
+            <div id="now-playing-info" class="text-gray-400 text-center">
+                {% if currently_playing %}
+                    <i class="fa-solid fa-compact-disc fa-spin text-5xl mb-4 text-purple-400"></i>
+                    <p>Playing the key of {{ currently_playing_key }}</p>
+                {% else %}
+                    <button onclick="playRadio()"><i class="fa-solid fa-play text-5xl mb-4 text-purple-400"></i>
+                    </button>
+                {% endif %}
+                <div id="current-history-list" class="space-y-2">
+                    {% for key, song in current_history.items() %}
+                    <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700">
+                        <div class="flex items-center space-x-4 flex-grow min-w-0">
+                            <i class="fa-solid fa-music text-purple-400"></i>
+                            <span class="flex-grow text-sm sm:text-base truncate">{{ key.split('-')[0] }}</span>
+                        </div>
+                        <div class="flex items-center space-x-2 ml-4">
+                            <span class="text-xs text-gray-400 whitespace-nowrap">{{ song.played }} plays</span>
+                            <i class="fa-solid fa-heart {% if song.liked %}text-red-500{% else %}text-gray-500{% endif %}" onclick="like('{{ key }}')"></i>
+                            <i class="fa-solid fa-thumbs-down {% if song.disliked %}text-blue-500{% else %}text-gray-500{% endif %}" onclick="dislike('{{ key }}')"></i>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+</body>
+<script>
+    async function playRadio() {
+        try {
+            const response = await fetch('/play', {
+                method: 'GET'
+            });
+            const result = await response.text();
+            if(result === "Ok") {
+                console.log("Done");
+            }
+        } catch (error) {
+            console.error('Network or server error', error);
+        } finally {
+            location.reload();
+        }
+    }
+    async function like(signatureKey) {
+        try {
+            const response = await fetch('/like', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ key: signatureKey })
+            });
+            const result = await response.text();
+            if(result === "Ok") {
+                console.log("Done");
+            }
+        } catch (error) {
+            console.error('Network or server error', error);
+        } finally {
+            location.reload();
+        }
+    }
+    async function dislike(signatureKey) {
+        try {
+            const response = await fetch('/dislike', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ key: signatureKey })
+            });
+            const result = await response.text();
+            if(result === "Ok") {
+                console.log("Done");
+            }
+        } catch (error) {
+            console.error('Network or server error', error);
+        } finally {
+            location.reload();
+        }
+    }
+</script>
+</html>
