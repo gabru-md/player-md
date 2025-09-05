@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="10">
+    <meta http-equiv="refresh" content="30">
     <title>Radio-MD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -22,35 +22,35 @@
         }
 
         /* Circle of Fifths Soft Tailwind Color Classes */
-        .key-c { color: #f472b6; } /* Pink - C */
-        .key-g { color: #f87171; } /* Red - G */
-        .key-d { color: #fb923c; } /* Orange - D */
-        .key-a { color: #fcd34d; } /* Yellow - A */
-        .key-e { color: #a3e635; } /* Lime - E */
-        .key-b { color: #4ade80; } /* Green - B */
-        .key-fs { color: #2dd4bf; } /* Teal - F# */
-        .key-cs { color: #22d3ee; } /* Cyan - C# */
-        .key-gs { color: #38bdf8; } /* Light Blue - G# */
-        .key-ds { color: #818cf8; } /* Indigo - D# */
-        .key-as { color: #c084fc; } /* Purple - A# */
-        .key-f { color: #e879f9; } /* Fuchsia - F */
+        .key-c { background-color: #f472b6; } /* Pink - C */
+        .key-g { background-color: #f87171; } /* Red - G */
+        .key-d { background-color: #fb923c; } /* Orange - D */
+        .key-a { background-color: #fcd34d; } /* Yellow - A */
+        .key-e { background-color: #a3e635; } /* Lime - E */
+        .key-b { background-color: #4ade80; } /* Green - B */
+        .key-fs { background-color: #2dd4bf; } /* Teal - F# */
+        .key-cs { background-color: #22d3ee; } /* Cyan - C# */
+        .key-gs { background-color: #38bdf8; } /* Light Blue - G# */
+        .key-ds { background-color: #818cf8; } /* Indigo - D# */
+        .key-as { background-color: #c084fc; } /* Purple - A# */
+        .key-f { background-color: #e879f9; } /* Fuchsia - F */
 
         /* Minor keys (darker versions) */
-        .key-am { color: #ec4899; } /* Dark Pink - Am */
-        .key-em { color: #ef4444; } /* Dark Red - Em */
-        .key-bm { color: #f97316; } /* Dark Orange - Bm */
-        .key-fsm { color: #f59e0b; } /* Dark Yellow - F#m */
-        .key-csm { color: #84cc16; } /* Dark Lime - C#m */
-        .key-gsm { color: #22c55e; } /* Dark Green - G#m */
-        .key-dsm { color: #14b8a6; } /* Dark Teal - D#m */
-        .key-asm { color: #06b6d4; } /* Dark Cyan - A#m */
-        .key-fm { color: #0ea5e9; } /* Dark Light Blue - Fm */
-        .key-cm { color: #6366f1; } /* Dark Indigo - Cm */
-        .key-gm { color: #a855f7; } /* Dark Purple - Gm */
-        .key-dm { color: #d946ef; } /* Dark Fuchsia - Dm */
+        .key-am { background-color: #ec4899; } /* Dark Pink - Am */
+        .key-em { background-color: #ef4444; } /* Dark Red - Em */
+        .key-bm { background-color: #f97316; } /* Dark Orange - Bm */
+        .key-fsm { background-color: #f59e0b; } /* Dark Yellow - F#m */
+        .key-csm { background-color: #84cc16; } /* Dark C#m */
+        .key-gsm { background-color: #22c55e; } /* Dark G#m */
+        .key-dsm { background-color: #14b8a6; } /* Dark D#m */
+        .key-asm { background-color: #06b6d4; } /* Dark A#m */
+        .key-fm { background-color: #0ea5e9; } /* Dark Fm */
+        .key-cm { background-color: #6366f1; } /* Dark Cm */
+        .key-gm { background-color: #a855f7; } /* Dark Gm */
+        .key-dm { background-color: #d946ef; } /* Dark Dm */
 
         /* Default/Unknown key */
-        .key-unknown { color: #94a3b8; } /* Slate - Unknown */
+        .key-unknown { background-color: #94a3b8; } /* Slate - Unknown */
     </style>
 </head>
 <body class="bg-gray-900 text-white min-h-screen p-4 sm:p-8">
@@ -65,13 +65,12 @@
 
     <main class="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
-
         <div class="lg:col-span-1 space-y-6">
             <div class="bg-gray-800 rounded-xl p-6 shadow-xl sticky top-8">
                 <h2 class="text-2xl font-bold text-gray-200 mb-4">Now Playing</h2>
                 <div id="now-playing-info" class="text-gray-400 text-center">
                     {% if currently_playing %}
-                    <i id="now-playing-disc" class="fa-solid fa-compact-disc fa-spin text-5xl mb-4"></i>
+                    <i id="now-playing-disc" class="fa-solid fa-compact-disc text-purple-400 fa-spin text-5xl mb-4"></i>
                     <p>Playing the key of {{ currently_playing_key }}</p>
                     {% else %}
                     <button onclick="playRadio()"><i class="fa-solid fa-play text-5xl mb-4 text-purple-400"></i>
@@ -88,7 +87,9 @@
                         <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700"
                              onclick="selectSong('{{ key }}')">
                             <div class="flex items-center space-x-4 flex-grow min-w-0">
-                                <i class="fa-solid fa-music text-5xl" data-key="{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}"></i>
+                                <div class="w-12 h-12 rounded-lg flex items-center justify-center album-cover" data-key="{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}">
+                                    <i class="fa-solid fa-music text-xl text-white"></i>
+                                </div>
                                 <span class="flex-grow text-sm sm:text-base truncate">{{ key.split('-')[0] }}</span>
                             </div>
                             <div class="flex items-center space-x-2 ml-4">
@@ -113,8 +114,10 @@
                     <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700"
                          onclick="selectSong('{{ key }}')">
                         <div class="flex items-center space-x-4 flex-grow min-w-0">
-                            <i class="fa-solid fa-music text-5xl" data-key="{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}"></i>
-                            <span class="flex-grow text-sm sm:text-base truncate">{{ key }}</span>
+                            <div class="w-12 h-12 rounded-lg flex items-center justify-center album-cover" data-key="{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}">
+                                <i class="fa-solid fa-music text-xl text-white"></i>
+                            </div>
+                            <span class="flex-grow text-sm sm:text-base truncate">{{ song.key }}</span>
                         </div>
                         <div class="flex items-center space-x-2 ml-4">
                             <span class="text-xs text-gray-400 whitespace-nowrap">{{ song.played }} plays</span>
@@ -132,7 +135,9 @@
                 <h2 class="text-2xl font-bold text-gray-200 mb-4">Song Details</h2>
                 <div id="selected-song-info" class="text-gray-400">
                     <div class="text-center mb-6">
-                        <i id="detail-music-icon" class="fa-solid fa-music text-5xl mb-4" data-key="Unknown"></i>
+                        <div id="detail-album-cover" class="w-24 h-24 mx-auto mb-4 rounded-lg shadow-xl flex items-center justify-center">
+                            <i id="detail-music-icon" class="fa-solid fa-music text-5xl text-white"></i>
+                        </div>
                         <h3 id="song-title" class="text-xl font-bold text-white mb-2">Pick a song</h3>
                     </div>
                     <div class="space-y-3">
@@ -222,28 +227,17 @@
     }
 
     function applyKeyColors() {
-        // Apply colors to all music icons
-        const musicIcons = document.querySelectorAll('i[data-key]');
-        musicIcons.forEach(icon => {
-            const key = icon.getAttribute('data-key');
+        // Apply colors to all album cover divs in the history lists
+        const albumCovers = document.querySelectorAll('.album-cover');
+        albumCovers.forEach(cover => {
+            const key = cover.getAttribute('data-key');
             const colorClass = getKeyColorClass(key);
 
             // Remove any existing key color classes
-            icon.className = icon.className.replace(/key-\w+/g, '');
+            cover.className = cover.className.replace(/key-\w+/g, '');
             // Add the new color class
-            icon.classList.add(colorClass);
+            cover.classList.add(colorClass);
         });
-
-        // Apply color to the now playing disc if it exists
-        const nowPlayingDisc = document.getElementById('now-playing-disc');
-        if (nowPlayingDisc) {
-            const currentlyPlayingKey = '{{ currently_playing_key }}';
-            if (currentlyPlayingKey && currentlyPlayingKey !== '') {
-                const colorClass = getKeyColorClass(currentlyPlayingKey);
-                nowPlayingDisc.className = nowPlayingDisc.className.replace(/key-\w+/g, '');
-                nowPlayingDisc.classList.add(colorClass);
-            }
-        }
     }
 
     function selectSong(key) {
@@ -256,11 +250,13 @@
         document.getElementById('song-liked').className = song.liked ? 'fa-solid fa-heart text-red-500 cursor-pointer' : 'fa-solid fa-heart text-gray-500 cursor-pointer';
         document.getElementById('song-disliked').className = song.disliked ? 'fa-solid fa-thumbs-down text-blue-500 cursor-pointer' : 'fa-solid fa-thumbs-down text-gray-500 cursor-pointer';
 
-        // Update the detail music icon with the correct key and color
-        const detailIcon = document.getElementById('detail-music-icon');
-        detailIcon.setAttribute('data-key', song.key);
+        // Update the album cover and music icon
+        const albumCover = document.getElementById('detail-album-cover');
         const colorClass = getKeyColorClass(song.key);
-        detailIcon.className = 'fa-solid fa-music text-5xl mb-4 ' + colorClass;
+        // Remove existing background color classes
+        albumCover.className = albumCover.className.replace(/key-\w+/g, '');
+        // Add the new background color class
+        albumCover.classList.add(colorClass);
 
         // Show song details panel
         document.getElementById('song-details').classList.remove('hidden');
