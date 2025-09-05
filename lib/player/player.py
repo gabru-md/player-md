@@ -49,6 +49,7 @@ class Player:
         Args:
             narrative_data: A list of Bar objects containing chord and melody info.
             signature_key: signature of the song
+            metadata: any metadata {}
         """
         print(f"Playing {signature_key} at {self.bpm} BPM...")
 

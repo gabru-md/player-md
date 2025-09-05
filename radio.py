@@ -43,7 +43,7 @@ def main():
 
     if args.ui:
         app = create_app(player, player_task)
-        app.run(debug=True)
+        app.run(host='0.0.0.0', port=5000, debug=True)
     else:
         player_task()
 

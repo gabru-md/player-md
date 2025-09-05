@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="10">
     <title>Radio-MD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -10,6 +11,14 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
+        }
+         /* ... existing styles ... */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
         }
     </style>
 </head>
@@ -24,6 +33,68 @@
     </header>
 
     <main class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+
+        <div class="lg:col-span-1 space-y-6">
+            <div class="bg-gray-800 rounded-xl p-6 shadow-xl sticky top-8">
+                <h2 class="text-2xl font-bold text-gray-200 mb-4">Now Playing</h2>
+                <div id="now-playing-info" class="text-gray-400 text-center">
+                    {% if currently_playing %}
+                    <i class="fa-solid fa-compact-disc fa-spin text-5xl mb-4 text-purple-400"></i>
+                    <p>Playing the key of {{ currently_playing_key }}</p>
+                    {% else %}
+                    <button onclick="playRadio()"><i class="fa-solid fa-play text-5xl mb-4 text-purple-400"></i>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="bg-gray-800 rounded-xl p-6 shadow-xl">
+                <h2 class="text-2xl font-bold text-gray-200 mb-4">Recent History</h2>
+                <div class="h-[30rem] overflow-y-scroll hide-scrollbar">
+                    <div id="current-history-list" class="space-y-2">
+                        {% for key, song in current_history.items()|reverse %}
+                        <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700"
+                             onclick="selectSong('{{ key }}')">
+                            <div class="flex items-center space-x-4 flex-grow min-w-0">
+                                <i class="fa-solid fa-music text-purple-400"></i>
+                                <span class="flex-grow text-sm sm:text-base truncate">{{ key.split('-')[0] }}</span>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <span class="text-xs text-gray-400 whitespace-nowrap">{{ song.played }} plays</span>
+                                <i class="fa-solid fa-heart {% if song.liked %}text-red-500{% else %}text-gray-500{% endif %}"
+                                   onclick="like('{{ key }}')"></i>
+                                <i class="fa-solid fa-thumbs-down {% if song.disliked %}text-blue-500{% else %}text-gray-500{% endif %}"
+                                   onclick="dislike('{{ key }}')"></i>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="history-section" class="lg:col-span-2 bg-gray-800 rounded-xl p-6 shadow-xl h-full">
+            <h2 class="text-2xl font-bold text-gray-200 mb-4">Saved Tracks</h2>
+            <div class="h-[40rem] overflow-y-scroll hide-scrollbar">
+                <div id="history-list" class="space-y-2">
+                    {% for key, song in history.items() %}
+                    <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700"
+                         onclick="selectSong('{{ key }}')">
+                        <div class="flex items-center space-x-4 flex-grow min-w-0">
+                            <i class="fa-solid fa-music text-purple-400"></i>
+                            <span class="flex-grow text-sm sm:text-base truncate">{{ key }}</span>
+                        </div>
+                        <div class="flex items-center space-x-2 ml-4">
+                            <span class="text-xs text-gray-400 whitespace-nowrap">{{ song.played }} plays</span>
+                            <i class="fa-solid fa-heart {% if song.liked %}text-red-500{% else %}text-gray-500{% endif %}"></i>
+                            <i class="fa-solid fa-thumbs-down {% if song.disliked %}text-blue-500{% else %}text-gray-500{% endif %}"></i>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
 
         <div class="lg:col-span-1 space-y-6">
             <div id="song-details" class="bg-gray-800 rounded-xl p-6 shadow-xl">
@@ -40,81 +111,30 @@
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-sm text-gray-400">Liked:</span>
-                            <i id="song-liked" class="fa-solid fa-heart text-gray-500 cursor-pointer" onclick="like(selectedSongKey)"></i>
+                            <i id="song-liked" class="fa-solid fa-heart text-gray-500 cursor-pointer"
+                               onclick="like(selectedSongKey)"></i>
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-sm text-gray-400">Disliked:</span>
-                            <i id="song-disliked" class="fa-solid fa-thumbs-down text-gray-500 cursor-pointer" onclick="dislike(selectedSongKey)"></i>
+                            <i id="song-disliked" class="fa-solid fa-thumbs-down text-gray-500 cursor-pointer"
+                               onclick="dislike(selectedSongKey)"></i>
                         </div>
                     </div>
-                    <button id="replay-button" onclick="replaySong()" class="w-full mt-6 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-200">
+                    <button id="replay-button" onclick="replaySong()"
+                            class="w-full mt-6 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-200">
                         <i class="fa-solid fa-play mr-2"></i>Replay Song
                     </button>
                 </div>
             </div>
 
-            <div class="bg-gray-800 rounded-xl p-6 shadow-xl">
-                <h2 class="text-2xl font-bold text-gray-200 mb-4">Random</h2>
-                <div class="text-center">
-                    <button onclick="playRadio()"><i class="fa-solid fa-shuffle text-5xl mb-4 text-purple-400"></i>
-                    </button>
-                    <p class="text-gray-400">Generate a new random song.</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="history-section" class="lg:col-span-2 bg-gray-800 rounded-xl p-6 shadow-xl h-full">
-            <h2 class="text-2xl font-bold text-gray-200 mb-4">Saved Tracks</h2>
-            <div id="history-list" class="space-y-2">
-                {% for key, song in history.items() %}
-                <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700"
-                     onclick="selectSong('{{ key }}')">
-                    <div class="flex items-center space-x-4 flex-grow min-w-0">
-                        <i class="fa-solid fa-music text-purple-400"></i>
-                        <span class="flex-grow text-sm sm:text-base truncate">{{ key }}</span>
-                    </div>
-                    <div class="flex items-center space-x-2 ml-4">
-                        <span class="text-xs text-gray-400 whitespace-nowrap">{{ song.played }} plays</span>
-                        <i class="fa-solid fa-heart {% if song.liked %}text-red-500{% else %}text-gray-500{% endif %}"></i>
-                        <i class="fa-solid fa-thumbs-down {% if song.disliked %}text-blue-500{% else %}text-gray-500{% endif %}"></i>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <div class="lg:col-span-1 space-y-6">
-            <div class="bg-gray-800 rounded-xl p-6 shadow-xl sticky top-8">
-                <h2 class="text-2xl font-bold text-gray-200 mb-4">Now Playing</h2>
-                <div id="now-playing-info" class="text-gray-400 text-center">
-                    {% if currently_playing %}
-                        <i class="fa-solid fa-compact-disc fa-spin text-5xl mb-4 text-purple-400"></i>
-                        <p>Playing the key of {{ currently_playing_key }}</p>
-                    {% else %}
-                        <button onclick="playRadio()"><i class="fa-solid fa-play text-5xl mb-4 text-purple-400"></i>
-                        </button>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="bg-gray-800 rounded-xl p-6 shadow-xl">
-                <h2 class="text-2xl font-bold text-gray-200 mb-4">Recent History</h2>
-                <div id="current-history-list" class="space-y-2">
-                    {% for key, song in current_history.items() %}
-                    <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700" onclick="selectSong('{{ key }}')">
-                        <div class="flex items-center space-x-4 flex-grow min-w-0">
-                            <i class="fa-solid fa-music text-purple-400"></i>
-                            <span class="flex-grow text-sm sm:text-base truncate">{{ key.split('-')[0] }}</span>
-                        </div>
-                        <div class="flex items-center space-x-2 ml-4">
-                            <span class="text-xs text-gray-400 whitespace-nowrap">{{ song.played }} plays</span>
-                            <i class="fa-solid fa-heart {% if song.liked %}text-red-500{% else %}text-gray-500{% endif %}" onclick="like('{{ key }}')"></i>
-                            <i class="fa-solid fa-thumbs-down {% if song.disliked %}text-blue-500{% else %}text-gray-500{% endif %}" onclick="dislike('{{ key }}')"></i>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
+            <!--            <div class="bg-gray-800 rounded-xl p-6 shadow-xl">-->
+            <!--                <h2 class="text-2xl font-bold text-gray-200 mb-4">Random</h2>-->
+            <!--                <div class="text-center">-->
+            <!--                    <button onclick="playRadio()"><i class="fa-solid fa-shuffle text-5xl mb-4 text-purple-400"></i>-->
+            <!--                    </button>-->
+            <!--                    <p class="text-gray-400">Generate a new random song.</p>-->
+            <!--                </div>-->
+            <!--            </div>-->
         </div>
 
     </main>
@@ -159,13 +179,15 @@
     async function replaySong() {
         if (!selectedSongKey) return;
 
+        const song = historyData[selectedSongKey];
+
         try {
             const response = await fetch('/replay', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ key: selectedSongKey })
+                body: JSON.stringify({ key: selectedSongKey, song_key: song['key'] })
             });
             const result = await response.text();
             if(result === "Ok") {
@@ -174,7 +196,7 @@
         } catch (error) {
             console.error('Network or server error', error);
         } finally {
-            location.reload();
+            // location.reload();
         }
     }
 
