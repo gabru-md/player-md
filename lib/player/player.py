@@ -115,7 +115,7 @@ class Player:
             if signature_key in self.history:
                 self.history[signature_key]['played'] += 1
             else:
-                self.history[signature_key] = {'played': 1, 'liked': False, 'disliked': False}
+                self.history[signature_key] = {'played': 1, 'liked': False, 'disliked': False, 'key': self.currently_playing_key.__class__.__name__}
 
         self.currently_playing = None
         self.currently_playing_key = None

@@ -15,7 +15,7 @@
 </head>
 <body class="bg-gray-900 text-white min-h-screen p-4 sm:p-8">
 
-<div class="max-w-4xl mx-auto">
+<div class="max-w-6xl mx-auto">
     <header class="text-center mb-10">
         <h1 class="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 rounded-lg">
             Radio-MD
@@ -23,10 +23,38 @@
         <p class="mt-2 text-gray-400">Your curated collection of generated music narratives.</p>
     </header>
 
-    <main class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <main class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+        <!-- Song Details Section (Hidden by default) -->
+        <div id="song-details" class="lg:col-span-1 bg-gray-800 rounded-xl p-6 shadow-xl hidden">
+            <h2 class="text-2xl font-bold text-gray-200 mb-4">Song Details</h2>
+            <div id="selected-song-info" class="text-gray-400">
+                <div class="text-center mb-6">
+                    <i class="fa-solid fa-music text-5xl mb-4 text-purple-400"></i>
+                    <h3 id="song-title" class="text-xl font-bold text-white mb-2"></h3>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-400">Plays:</span>
+                        <span id="song-plays" class="text-white font-semibold"></span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-400">Liked:</span>
+                        <i id="song-liked" class="fa-solid fa-heart text-gray-500"></i>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-400">Disliked:</span>
+                        <i id="song-disliked" class="fa-solid fa-thumbs-down text-gray-500"></i>
+                    </div>
+                </div>
+                <button id="replay-button" onclick="replaySong()" class="w-full mt-6 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-200">
+                    <i class="fa-solid fa-play mr-2"></i>Replay Song
+                </button>
+            </div>
+        </div>
 
         <!-- History List Section -->
-        <div class="md:col-span-2 bg-gray-800 rounded-xl p-6 shadow-xl h-full">
+        <div id="history-section" class="lg:col-span-2 bg-gray-800 rounded-xl p-6 shadow-xl h-full">
             <h2 class="text-2xl font-bold text-gray-200 mb-4">Saved Tracks</h2>
             <div id="history-list" class="space-y-2">
                 <!-- History items will be dynamically generated here by the server -->
@@ -48,7 +76,7 @@
         </div>
 
         <!-- Now Playing & Stats Section -->
-        <div class="md:col-span-1 bg-gray-800 rounded-xl p-6 shadow-xl sticky top-8">
+        <div class="lg:col-span-1 bg-gray-800 rounded-xl p-6 shadow-xl sticky top-8">
             <h2 class="text-2xl font-bold text-gray-200 mb-4">Now Playing</h2>
             <div id="now-playing-info" class="text-gray-400 text-center">
                 {% if currently_playing %}
@@ -60,7 +88,7 @@
                 {% endif %}
                 <div id="current-history-list" class="space-y-2">
                     {% for key, song in current_history.items() %}
-                    <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700">
+                    <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700" onclick="selectSong('{{ key }}')">
                         <div class="flex items-center space-x-4 flex-grow min-w-0">
                             <i class="fa-solid fa-music text-purple-400"></i>
                             <span class="flex-grow text-sm sm:text-base truncate">{{ key.split('-')[0] }}</span>
@@ -80,6 +108,63 @@
 </div>
 </body>
 <script>
+    let selectedSongKey = null;
+    const historyData = {
+        {% for key, song in history.items() %}
+        "{{ key }}": {
+            played: {{ song.played }},
+            liked: {{ song.liked|lower }},
+            disliked: {{ song.disliked|lower }},
+            key: "{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}",
+        },
+        {% endfor %}
+
+        {% for key, song in current_history.items() %}
+        "{{ key }}": {
+            played: {{ song.played }},
+            liked: {{ song.liked|lower }},
+            disliked: {{ song.disliked|lower }},
+            key: "{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}",
+        },
+        {% endfor %}
+    };
+
+    function selectSong(key) {
+        selectedSongKey = key;
+        const song = historyData[key];
+        
+        // Update song details
+        document.getElementById('song-title').textContent = "Key: " + song.key;
+        document.getElementById('song-plays').textContent = song.played;
+        document.getElementById('song-liked').className = song.liked ? 'fa-solid fa-heart text-red-500' : 'fa-solid fa-heart text-gray-500';
+        document.getElementById('song-disliked').className = song.disliked ? 'fa-solid fa-thumbs-down text-blue-500' : 'fa-solid fa-thumbs-down text-gray-500';
+        
+        // Show song details panel
+        document.getElementById('song-details').classList.remove('hidden');
+    }
+
+    async function replaySong() {
+        if (!selectedSongKey) return;
+        
+        try {
+            const response = await fetch('/replay', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ key: selectedSongKey })
+            });
+            const result = await response.text();
+            if(result === "Ok") {
+                console.log("Replaying song");
+            }
+        } catch (error) {
+            console.error('Network or server error', error);
+        } finally {
+            location.reload();
+        }
+    }
+
     async function playRadio() {
         try {
             const response = await fetch('/play', {

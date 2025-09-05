@@ -20,7 +20,10 @@ def create_app(player: Player, player_task=None):
             if file.endswith(".json"):
                 with open(os.path.join(history_folder, file)) as json_history_file:
                     # check if history looks like: {'song_signature': {'played': 1, 'liked': False, 'disliked': False}}
-                    all_json_history.update(json.load(json_history_file))
+                    try:
+                        all_json_history.update(json.load(json_history_file))
+                    except Exception as e:
+                        print(e)
 
         sorted_history = sorted(
             all_json_history.items(),
