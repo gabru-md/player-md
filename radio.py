@@ -28,7 +28,7 @@ def main():
             player.start_mixer()
             for _ in range(args.cycle):
                 for key in [k() for k in
-                            [Keys.CMajor, Keys.GMajor, Keys.EMinor, Keys.GMajor]]:
+                            [Keys.FMinor]]:
                     for _ in range(args.narratives):
                         narrative_data, signature_key = generator.generate_narrative(key=key, bars=8)
                         for _ in range(args.repeat):

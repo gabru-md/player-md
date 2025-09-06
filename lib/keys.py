@@ -1,3 +1,6 @@
+import json
+
+
 class Keys:
     class CMajor:
         def __init__(self):
@@ -62,12 +65,57 @@ class Keys:
 
     class GMinor:
         def __init__(self):
-            self.chords = ['G_min_chord', 'D_min_chord', 'E_flat_maj_chord', 'F_maj_chord', 'C_min_chord',
-                           'A_dim_chord']
-            self.notes = ['G_note', 'B_flat_note', 'D_note', 'G5_note']
+            self.chords = ['G_min_chord', 'D_min_chord', 'EFlat_maj_chord', 'F_maj_chord', 'C_min_chord',
+                           'ADim_chord']
+            self.notes = ['G_note', 'BFlat_note', 'D_note', 'G5_note']
 
     class FMinor:
         def __init__(self):
-            self.chords = ['F_min_chord', 'G_dim_chord', 'A_flat_maj_chord', 'B_flat_min_chord', 'C_min_chord',
-                           'D_flat_maj_chord', 'E_flat_maj_chord']
-            self.notes = ['F_note', 'A_flat_note', 'C_note', 'F5_note']
+            self.chords = ['F_min_chord', 'GDim_chord', 'AFlat_maj_chord', 'BFlat_min_chord', 'C_min_chord',
+                           'DFlat_maj_chord', 'EFlat_maj_chord']
+            self.notes = ['F_note', 'AFlat_note', 'C_note', 'F5_note', 'C5_F5_slide_note']
+
+    def get_all_chords_and_notes(self):
+        """
+        Gathers all unique chords and notes from all keys.
+
+        This method iterates through all the nested key classes within the Keys class,
+        instantiates each one, and adds their chords and notes to respective sets
+        to ensure all results are unique.
+
+        Returns:
+            tuple: A tuple containing two sets: (set of all unique chords, set of all unique notes).
+        """
+        all_chords = set()
+        all_notes = set()
+
+        # Get a list of all inner classes defined in the Keys class.
+        # This approach is dynamic and will work even if you add more keys.
+        key_classes = [
+            attr for attr in dir(self)
+            if not attr.startswith('__') and isinstance(getattr(self, attr), type)
+        ]
+
+        for key_class_name in key_classes:
+            key_class = getattr(self, key_class_name)
+            key_instance = key_class()
+            all_chords.update(key_instance.chords)
+            all_notes.update(key_instance.notes)
+
+        return all_chords, all_notes
+
+
+if __name__ == '__main__':
+    with open("sample_config.json") as config:
+        config_data = json.load(config)
+    chords, notes = Keys().get_all_chords_and_notes()
+
+    if config_data:
+
+        for chord in chords:
+            if chord not in config_data:
+                print(f"\"{chord}\": \"sample/{chord}.wav\"")
+
+        for note in notes:
+            if note not in config_data:
+                print(f"\"{note}\": \"sample/{note}.wav\"")
