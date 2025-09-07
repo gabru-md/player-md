@@ -55,13 +55,6 @@
 <body class="bg-gray-900 text-white min-h-screen p-4 sm:p-8">
 
 <div class="max-w-6xl mx-auto">
-    <header class="text-center mb-10">
-        <h1 class="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 rounded-lg">
-            Radio-MD
-        </h1>
-        <p class="mt-2 text-gray-400">Your curated collection of generated music narratives.</p>
-    </header>
-
     <main class="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
         <div id="history-section" class="lg:col-span-1 bg-gray-800 rounded-xl p-6 shadow-xl h-full">
@@ -173,10 +166,60 @@
                     </button>
                 </div>
             </div>
-
+               <div class="lg:col-span-1 space-y-6">
+            <div id="radio-stats" class="bg-gray-800 rounded-xl p-6 shadow-xl">
+                <h2 class="text-2xl font-bold text-gray-200 mb-4">{{ radio_stats.name }} Settings</h2>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-400">BPM:</span>
+                        <span id="radio-bpm" class="text-white font-semibold">{{ radio_stats.bpm if radio_stats else '-' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-400">Narratives:</span>
+                        <span id="radio-narratives" class="text-white font-semibold">{{ radio_stats.narratives if radio_stats else '-' }} <span title="{{ radio_stats.narratives }} Repeating {{ radio_stats.repeat }} times">({{ radio_stats.repeat }})</span></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-400">Keys:</span>
+                        <span id="radio-keys" class="text-white font-semibold">{{ radio_stats.musical_keys if radio_stats else '-' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-400">Drums:</span>
+                        {% if radio_stats %}
+                        <span id="radio-drums" class="text-white font-semibold">{{ 'Enabled' if radio_stats.drums else '-' }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-400">Status:</span>
+                        <span id="radio-status" class="text-white font-semibold">
+                            {% if radio_stats %}
+                                {% if radio_stats.playing %}
+                                    <span class="text-green-400">
+                                        <i class="fa-solid fa-play mr-1"></i>Playing
+                                    </span>
+                                {% elif radio_stats.pause %}
+                                    <span class="text-yellow-400">
+                                        <i class="fa-solid fa-pause mr-1"></i>Paused
+                                    </span>
+                                {% else %}
+                                    <span class="text-gray-400">
+                                        <i class="fa-solid fa-stop mr-1"></i>Stopped
+                                    </span>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-gray-400">
+                                    <i class="fa-solid fa-stop mr-1"></i>Stopped
+                                </span>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
-
+        </div>
     </main>
+    <footer class="text-center">
+        <pre class="mt-2 text-gray-400"><a href="/">radio-md</a> by <a href="https://github.com/gabru-md" target="_blank">gabru-md</a></pre>
+    </footer>
 </div>
 </body>
 <script>

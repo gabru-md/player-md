@@ -7,7 +7,9 @@ from flask import Flask, render_template, request
 from lib.signature import parse_signature_key
 
 
-def create_app(player: Player, replayer: Player = None, player_task=None):
+def create_app(player: Player, replayer: Player = None, player_task=None, radio_stats=None):
+    if radio_stats is None:
+        radio_stats = {}
     player_task = player_task
     player = player
     if replayer is None:
@@ -34,17 +36,38 @@ def create_app(player: Player, replayer: Player = None, player_task=None):
         currently_playing = player.currently_playing
         player_name = player.name
 
+        radio_stats.update({
+            'name': player.name,
+            'bpm': player.bpm,
+            'pause': player.pause,
+            'playing': player.playing
+        })
+
         if player.pause and not player.playing:
             current_history = replayer.history_manager.history
             currently_playing = replayer.currently_playing
             currently_playing_key = replayer.currently_playing_key
             player_name = replayer.name
+
+            radio_stats.update({
+                'name': replayer.name,
+                'bpm': replayer.bpm,
+                'pause': replayer.pause,
+                'playing': replayer.playing
+            })
+
         else:
             currently_playing_key = player.currently_playing_key.__class__.__name__
+            radio_stats.update({
+                'name': player.name,
+                'bpm': player.bpm,
+                'pause': player.pause,
+                'playing': player.playing
+            })
 
         return render_template('home.html', history=top_n_history, current_history=current_history,
                                currently_playing=currently_playing, currently_playing_key=currently_playing_key,
-                               player_name=player_name)
+                               player_name=player_name, radio_stats=radio_stats)
 
     @app.route('/play')
     def play_radio():

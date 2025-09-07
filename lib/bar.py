@@ -1,5 +1,5 @@
 class Bar:
-    def __init__(self, chords, melody_notes):
+    def __init__(self, chords, melody_notes, drums=None):
         """
         A single bar of music containing both chord and melody information.
 
@@ -9,3 +9,4 @@ class Bar:
         """
         self.chords = chords
         self.melody_notes = melody_notes
+        self.drums = drums

@@ -12,6 +12,7 @@ MIXER_RUNNING = False
 class Channels(Enum):
     CHORDS_CHANNEL = 0
     MELODY_CHANNEL = 1
+    DRUMS_CHANNEL = 2
 
 
 class Player:
@@ -33,6 +34,7 @@ class Player:
         # Create separate channels to allow chords and melodies to play simultaneously.
         self.chords_channel = pygame.mixer.Channel(Channels.CHORDS_CHANNEL.value)
         self.melody_channel = pygame.mixer.Channel(Channels.MELODY_CHANNEL.value)
+        self.drums_channel = pygame.mixer.Channel(Channels.DRUMS_CHANNEL.value)
         self.samples = load_samples(sample_config)
 
         self.currently_playing = None
@@ -103,6 +105,23 @@ class Player:
                     'beat_time': bar_start_beat + beat_offset
                 })
 
+            kicks, hi_hats = bar_data.drums
+            if kicks:
+                for _, beat_offset in kicks:
+                    event_list.append({
+                        'type': 'drum',
+                        'name': 'Kick',
+                        'beat_time': bar_start_beat + beat_offset
+                    })
+
+            if hi_hats:
+                for _, beat_offset in hi_hats:
+                    event_list.append({
+                        'type': 'drum',
+                        'name': 'HiHat',
+                        'beat_time': bar_start_beat + beat_offset
+                    })
+
         # Sort all events by their beat time to ensure correct playback order
         event_list.sort(key=lambda x: x['beat_time'])
 
@@ -120,10 +139,12 @@ class Player:
                     self.melody_channel.stop()  # to counter overlap
                     self.chords_channel.play(sound)
                     # print(f"Chord: {event['name']}")
-                else:
+                elif event['type'] == 'melody':
                     self.melody_channel.stop()  # to counter overlap
                     self.melody_channel.play(sound)
                     # print(f"  Note: {event['name']}")
+                elif event['type'] == 'drum':
+                    self.drums_channel.play(sound)
             else:
                 print(f"{event['name']} Sound not found")
 

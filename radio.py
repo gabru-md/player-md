@@ -80,10 +80,20 @@ def main():
     parser.add_argument("--history", type=str, default=None, help="Name of the history file to save the tracks")
     parser.add_argument("--ui", action="store_true", help="Enable web ui using flask")
     parser.add_argument("--keys", type=str, default="C,G,E,G", help="Keys that you want to play (in order)")
+    parser.add_argument("--drums", action="store_true", help="Enable drums to be played along with narrative")
+
     args = parser.parse_args()
 
     generator = NarrativeGenerator()
     player = Player(bpm=args.bpm)
+
+    radio_stats = {
+        'bpm': args.bpm,
+        'narratives': args.narratives,
+        'repeat': args.repeat,
+        'musical_keys': args.keys,
+        'drums': args.drums
+    }
 
     def player_task():
         history_file_name = f"history/{args.history}.json" if args.history is not None else None
@@ -93,7 +103,7 @@ def main():
                 keys_to_play = get_keys_to_play(args.keys)
                 for key in [k() for k in keys_to_play]:
                     for _ in range(args.narratives):
-                        narrative_data, signature_key = generator.generate_narrative(key=key, bars=8)
+                        narrative_data, signature_key = generator.generate_narrative(key=key, bars=8, enable_drums=args.drums)
                         for _ in range(args.repeat):
                             metadata = {'key': key}
                             player.play_music(narrative_data=narrative_data, signature_key=signature_key,
@@ -106,7 +116,7 @@ def main():
             player.stop_mixer()
 
     if args.ui:
-        app = create_app(player=player, player_task=player_task)
+        app = create_app(player=player, player_task=player_task, radio_stats=radio_stats)
         app.run(host='0.0.0.0', port=5000, debug=True)
     else:
         player_task()

@@ -49,5 +49,8 @@
   "BFlat_note": "sample/BFlat_note.wav",
   "B_maj_chord": "sample/B_maj_chord.wav",
   "ADim_chord": "sample/ADim_chord.wav",
-  "EFlat_note": "sample/EFlat_note.wav"
+  "EFlat_note": "sample/EFlat_note.wav",
+
+  "Kick": "sample/Kick.wav",
+  "HiHat": "sample/HiHat.wav"
 }

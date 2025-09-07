@@ -6,7 +6,8 @@ from lib.audio.equalizer import Equalizer
 
 
 def load_samples(sample_path, compressor: Compressor = Compressor(), note_compressor: Compressor = Compressor(gain=0.8),
-                 slide_note_compressor=Compressor(gain=0.6, attack_ms=50), chord_eq=Equalizer(center_frequency=170, gain_db=12)):
+                 slide_note_compressor=Compressor(gain=0.6, attack_ms=50),
+                 chord_eq=Equalizer(center_frequency=170, gain_db=12), drums_compressor=Compressor(gain=0.8)):
     """
     Loads sample from a dictionary of 'note_name': 'file_path'.
     In a real scenario, this would load the actual audio data into memory.
@@ -21,10 +22,12 @@ def load_samples(sample_path, compressor: Compressor = Compressor(), note_compre
                 sound = slide_note_compressor.process_sound(sound)
             else:
                 sound = note_compressor.process_sound(sound)
-        else: # chords
+        elif name.endswith("_chord"):  # chords
             if chord_eq:
                 sound = chord_eq.process_sound(sound)
             sound = compressor.process_sound(sound)
+        else:
+            sound = drums_compressor.process_sound(sound)
 
         samples[name] = sound
         # print(f"Loaded: {name} from {path}")
