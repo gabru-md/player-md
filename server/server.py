@@ -78,7 +78,6 @@ def create_app(player: Player, player_task=None):
                     raise e
                 finally:
                     single_player.save_history()
-                    single_player.stop_mixer()
 
             player_thread = threading.Thread(target=play_song, daemon=True)
             player_thread.start()

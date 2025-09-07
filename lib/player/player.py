@@ -105,6 +105,8 @@ class Player:
                     self.melody_channel.stop() # to counter overlap
                     self.melody_channel.play(sound)
                     # print(f"  Note: {event['name']}")
+            else:
+                print(f"{event['name']} Sound not found")
 
         # Add a final wait at the end of the song to ensure all notes are played
         total_beats = len(narrative_data) * 4

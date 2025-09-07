@@ -44,7 +44,8 @@ class NarrativeGenerator:
 
         self.release_rhythm_patterns = [
             [0, 2],
-            [0]
+            [0],
+            [1, 2, 2,5]
         ]
 
         # Chord progression patterns based on scale degrees (e.g., 0=root, 3=fourth)
@@ -66,6 +67,8 @@ class NarrativeGenerator:
         ]
         self.buildup_chord_rhythm_patterns = [
             [0, 1, 2, 3],
+            [0, 2],
+            [1, 2]
             # [0, 1, 1.5, 2, 2.5, 3]
         ]
 

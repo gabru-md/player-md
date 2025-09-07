@@ -75,6 +75,22 @@ class Keys:
                            'DFlat_maj_chord', 'EFlat_maj_chord']
             self.notes = ['F_note', 'AFlat_note', 'C_note', 'F5_note', 'C5_F5_slide_note']
 
+    class CMinor:
+        def __init__(self):
+            self.chords = ['C_min_chord', 'EFlat_maj_chord', 'F_min_chord', 'G_min_chord', 'AFlat_maj_chord', 'BFlat_min_chord']
+            self.notes = ['C_note', 'D_note', 'EFlat_note', 'F_note', 'AFlat_note', 'G_note']
+
+    class EFlatMajor:
+        def __init__(self):
+            self.chords = ['EFlat_maj_chord', 'F_min_chord', 'G_min_chord', 'AFlat_maj_chord', 'BFlat_min_chord',
+                           'C_min_chord']
+            self.notes = ['EFlat_note', 'F_note', 'G_note', 'AFlat_note', 'BFlat_note', 'C_note', 'D_note']
+
+    class GSharpMinor:
+        def __init__(self):
+            self.chords = ['GSharp_min_chord', 'B_maj_chord', 'CSharp_min_chord', 'E_maj_chord', 'FSharp_min_chord']
+            self.notes = ['GSharp_note', 'B_note', 'CSharp_note', 'E_note', 'FSharp_note']
+
     def get_all_chords_and_notes(self):
         """
         Gathers all unique chords and notes from all keys.
@@ -104,6 +120,18 @@ class Keys:
 
         return all_chords, all_notes
 
+def get_key_class(full_key_name):
+    key_name = full_key_name.replace(' ', '').lower()
+
+    # Iterate through the attributes of the Keys class
+    for attr_name in dir(Keys):
+        if not attr_name.startswith('__'):
+            attr = getattr(Keys, attr_name)
+            # Check if the attribute is a class and its name matches the input
+            if isinstance(attr, type) and attr_name.lower() == key_name:
+                return attr
+    return None
+
 
 if __name__ == '__main__':
     with open("sample_config.json") as config:
@@ -119,3 +147,5 @@ if __name__ == '__main__':
         for note in notes:
             if note not in config_data:
                 print(f"\"{note}\": \"sample/{note}.wav\"")
+
+    print(get_key_class('CMajor'))

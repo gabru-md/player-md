@@ -44,11 +44,10 @@
   "GSharp_note": "sample/GSharp_note.wav",
   "FSharp5_note": "sample/FSharp5_note.wav",
   "CSharp5_note": "sample/CSharp5_note.wav",
-  "B_flat_note": "sample/B_flat_note.wav",
-  "A_flat_note": "sample/A_flat_note.wav",
   "CSharp_min_chord": "sample/CSharp_min_chord.wav",
   "G_min_chord": "sample/G_min_chord.wav",
   "BFlat_note": "sample/BFlat_note.wav",
   "B_maj_chord": "sample/B_maj_chord.wav",
-  "ADim_chord": "sample/ADim_chord.wav"
+  "ADim_chord": "sample/ADim_chord.wav",
+  "EFlat_note": "sample/EFlat_note.wav"
 }
