@@ -107,8 +107,10 @@ def main():
         history_file_name = f"history/{args.history}.json" if args.history is not None else None
         try:
             player.start_mixer()
+            played_so_far = 0
             for _ in range(args.cycle):
                 keys_to_play = get_keys_to_play(args.keys)
+                total_number_of_plays = args.cycle * len(keys_to_play) * args.narratives * args.repeat
                 for key in [k() for k in keys_to_play]:
                     for _ in range(args.narratives):
                         narrative_data, signature_key = generator.generate_narrative(key=key, bars=8, enable_drums=args.drums)
@@ -116,6 +118,8 @@ def main():
                             metadata = {'key': key}
                             player.play_music(narrative_data=narrative_data, signature_key=signature_key,
                                               metadata=metadata)
+                            played_so_far += 1
+                            print(f"[{played_so_far}/{total_number_of_plays}] played")
         except InterruptedError as e:
             print(e)
             raise e
