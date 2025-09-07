@@ -1,7 +1,6 @@
 import pygame
 import numpy as np
 
-
 class Compressor:
     """
     A simple audio compressor that processes Pygame Sound objects.
@@ -24,7 +23,7 @@ class Compressor:
         self.ratio = ratio
         self.attack_ms = attack_ms
         self.release_ms = release_ms
-        self.gain = gain
+        self._gain = gain
 
     def process_sound(self, sound):
         """
@@ -38,6 +37,8 @@ class Compressor:
         """
         raw_data = sound.get_raw()
         samples = np.frombuffer(raw_data, dtype=np.int16)
+
+        gain = self._gain
 
         # Calculate samples per millisecond for attack and release
         sample_rate = pygame.mixer.get_init()[0]
@@ -55,12 +56,12 @@ class Compressor:
                 # Compression is active
                 gain_reduction = (amplitude - self.threshold) / self.ratio
                 new_gain = self.threshold + gain_reduction
-                self.gain = self.gain - (self.gain - new_gain) / (1 + attack_samples)
+                gain = gain - (gain - new_gain) / (1 + attack_samples)
             else:
                 # Release phase
-                self.gain = self.gain + (1.0 - self.gain) / (1 + release_samples)
+                gain = gain + (1.0 - gain) / (1 + release_samples)
 
-            processed_samples[i] = processed_samples[i] * self.gain
+            processed_samples[i] = processed_samples[i] * gain
 
         processed_samples = np.clip(processed_samples, -32768, 32767).astype(np.int16)
         return pygame.mixer.Sound(processed_samples.tobytes())

@@ -13,6 +13,7 @@ class Channels(Enum):
     CHORDS_CHANNEL = 0
     MELODY_CHANNEL = 1
     DRUMS_CHANNEL = 2
+    BASS_CHANNEL = 4
 
 
 class Player:
@@ -30,11 +31,11 @@ class Player:
         self.phase_shift_beats = 0
 
         self.start_mixer()
-
         # Create separate channels to allow chords and melodies to play simultaneously.
         self.chords_channel = pygame.mixer.Channel(Channels.CHORDS_CHANNEL.value)
         self.melody_channel = pygame.mixer.Channel(Channels.MELODY_CHANNEL.value)
         self.drums_channel = pygame.mixer.Channel(Channels.DRUMS_CHANNEL.value)
+        self.bass_channel = pygame.mixer.Channel(Channels.BASS_CHANNEL.value)
         self.samples = load_samples(sample_config)
 
         self.currently_playing = None
@@ -87,6 +88,13 @@ class Player:
             self.playing = True
             bar_start_beat = bar_index * 4
 
+            for bass_note, beat_offset in bar_data.bass:
+                event_list.append({
+                    'type': 'bass',
+                    'name': bass_note,
+                    'beat_time': bar_start_beat + beat_offset
+                })
+
             # Add all chord events for this bar to the event list
             # We now assume bar_data.chords is a list of tuples: [('chord_name', beat_offset)]
             for chord_name, beat_offset in bar_data.chords:
@@ -135,7 +143,10 @@ class Player:
 
             sound = self.samples.get(event['name'])
             if sound:
-                if event['type'] == 'chord':
+                if event['type'] == 'bass':
+                    self.bass_channel.stop()
+                    self.bass_channel.play(sound)
+                elif event['type'] == 'chord':
                     self.melody_channel.stop()  # to counter overlap
                     self.chords_channel.play(sound)
                     # print(f"Chord: {event['name']}")

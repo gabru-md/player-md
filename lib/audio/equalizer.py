@@ -1,6 +1,7 @@
 import pygame
 import numpy as np
-
+import io
+import wave
 
 class Equalizer:
     """
