@@ -38,6 +38,54 @@ class Keys:
                            'A_min_chord']
             self.notes = ['F_note', 'A_note', 'C_note', 'F5_note']
 
+    class BMajor:
+        def __init__(self):
+            self.chords = ['B_maj_chord', 'FSharp_maj_chord', 'GSharp_min_chord', 'E_maj_chord', 'CSharp_min_chord',
+                           'DSharp_min_chord']
+            self.notes = ['B_note', 'DSharp_note', 'FSharp_note', 'B5_note']
+
+    class FSharpMajor:
+        def __init__(self):
+            self.chords = ['FSharp_maj_chord', 'CSharp_maj_chord', 'DSharp_min_chord', 'B_maj_chord',
+                           'GSharp_min_chord', 'ASharp_min_chord']
+            self.notes = ['FSharp_note', 'ASharp_note', 'CSharp_note', 'FSharp5_note']
+
+    class CSharpMajor:
+        def __init__(self):
+            self.chords = ['CSharp_maj_chord', 'GSharp_maj_chord', 'ASharp_min_chord', 'FSharp_maj_chord',
+                           'DSharp_min_chord', 'F_min_chord']
+            self.notes = ['CSharp_note', 'F_note', 'GSharp_note', 'CSharp5_note']
+
+    class GSharpMajor:
+        def __init__(self):
+            self.chords = ['GSharp_maj_chord', 'DSharp_maj_chord', 'F_min_chord', 'CSharp_maj_chord',
+                           'ASharp_min_chord', 'C_min_chord']
+            self.notes = ['GSharp_note', 'C_note', 'DSharp_note', 'GSharp5_note']
+
+    class AFlatMajor:
+        def __init__(self):
+            self.chords = ['AFlat_maj_chord', 'EFlat_maj_chord', 'F_min_chord', 'DFlat_maj_chord', 'BFlat_min_chord',
+                           'C_min_chord']
+            self.notes = ['AFlat_note', 'C_note', 'EFlat_note', 'AFlat5_note']
+
+    class DFlatMajor:
+        def __init__(self):
+            self.chords = ['DFlat_maj_chord', 'AFlat_maj_chord', 'BFlat_min_chord', 'GFlat_maj_chord',
+                           'EFlat_min_chord', 'F_min_chord']
+            self.notes = ['DFlat_note', 'F_note', 'AFlat_note', 'DFlat5_note']
+
+    class EFlatMajor:
+        def __init__(self):
+            self.chords = ['EFlat_maj_chord', 'BFlat_maj_chord', 'C_min_chord', 'AFlat_maj_chord', 'F_min_chord',
+                           'G_min_chord']
+            self.notes = ['EFlat_note', 'G_note', 'BFlat_note', 'EFlat5_note']
+
+    class BFlatMajor:
+        def __init__(self):
+            self.chords = ['BFlat_maj_chord', 'F_maj_chord', 'G_min_chord', 'EFlat_maj_chord', 'C_min_chord',
+                           'D_min_chord']
+            self.notes = ['BFlat_note', 'D_note', 'F_note', 'BFlat5_note']
+
     class AMinor:
         def __init__(self):
             self.chords = ['A_min_chord', 'E_min_chord', 'F_maj_chord', 'G_maj_chord', 'D_min_chord']
@@ -63,33 +111,52 @@ class Keys:
             self.chords = ['CSharp_min_chord', 'GSharp_min_chord', 'A_maj_chord', 'B_maj_chord', 'FSharp_min_chord']
             self.notes = ['CSharp_note', 'E_note', 'GSharp_note', 'CSharp5_note']
 
-    class GMinor:
-        def __init__(self):
-            self.chords = ['G_min_chord', 'D_min_chord', 'EFlat_maj_chord', 'F_maj_chord', 'C_min_chord',
-                           'ADim_chord']
-            self.notes = ['G_note', 'BFlat_note', 'D_note', 'G5_note']
-
-    class FMinor:
-        def __init__(self):
-            self.chords = ['F_min_chord', 'GDim_chord', 'AFlat_maj_chord', 'BFlat_min_chord', 'C_min_chord',
-                           'DFlat_maj_chord', 'EFlat_maj_chord']
-            self.notes = ['F_note', 'AFlat_note', 'C_note', 'F5_note', 'C5_F5_slide_note']
-
-    class CMinor:
-        def __init__(self):
-            self.chords = ['C_min_chord', 'EFlat_maj_chord', 'F_min_chord', 'G_min_chord', 'AFlat_maj_chord', 'BFlat_min_chord']
-            self.notes = ['C_note', 'D_note', 'EFlat_note', 'F_note', 'AFlat_note', 'G_note']
-
-    class EFlatMajor:
-        def __init__(self):
-            self.chords = ['EFlat_maj_chord', 'F_min_chord', 'G_min_chord', 'AFlat_maj_chord', 'BFlat_min_chord',
-                           'C_min_chord']
-            self.notes = ['EFlat_note', 'F_note', 'G_note', 'AFlat_note', 'BFlat_note', 'C_note', 'D_note']
-
     class GSharpMinor:
         def __init__(self):
             self.chords = ['GSharp_min_chord', 'B_maj_chord', 'CSharp_min_chord', 'E_maj_chord', 'FSharp_min_chord']
             self.notes = ['GSharp_note', 'B_note', 'CSharp_note', 'E_note', 'FSharp_note']
+
+    class GMinor:
+        def __init__(self):
+            self.chords = ['G_min_chord', 'D_min_chord', 'EFlat_maj_chord', 'F_maj_chord', 'C_min_chord']
+            self.notes = ['G_note', 'BFlat_note', 'D_note', 'G5_note']
+
+    class DMinor:
+        def __init__(self):
+            self.chords = ['D_min_chord', 'A_min_chord', 'BFlat_maj_chord', 'C_maj_chord', 'G_min_chord']
+            self.notes = ['D_note', 'F_note', 'A_note', 'D5_note']
+
+    class CMinor:
+        def __init__(self):
+            self.chords = ['C_min_chord', 'G_min_chord', 'AFlat_maj_chord', 'BFlat_maj_chord', 'F_min_chord']
+            self.notes = ['C_note', 'EFlat_note', 'G_note', 'C5_note']
+
+    class EFlatMinor:
+        def __init__(self):
+            self.chords = ['EFlat_min_chord', 'BFlat_min_chord', 'DFlat_maj_chord', 'CSharp_maj_chord',
+                           'AFlat_min_chord']
+            self.notes = ['EFlat_note', 'GFlat_note', 'BFlat_note', 'EFlat5_note']
+
+    class BFlatMinor:
+        def __init__(self):
+            self.chords = ['BFlat_min_chord', 'F_min_chord', 'GFlat_maj_chord', 'AFlat_maj_chord', 'EFlat_min_chord']
+            self.notes = ['BFlat_note', 'DFlat_note', 'F_note', 'BFlat5_note']
+
+    class FMinor:
+        def __init__(self):
+            self.chords = ['F_min_chord', 'C_min_chord', 'DFlat_maj_chord', 'EFlat_maj_chord', 'BFlat_min_chord']
+            self.notes = ['F_note', 'AFlat_note', 'C_note', 'F5_note']
+
+    class AFlatMinor:
+        def __init__(self):
+            self.chords = ['AFlat_min_chord', 'EFlat_min_chord', 'GFlat_maj_chord', 'AFlat_maj_chord',
+                           'DFlat_min_chord']
+            self.notes = ['AFlat_note', 'B_note', 'EFlat_note', 'AFlat5_note']
+
+    class DFlatMinor:
+        def __init__(self):
+            self.chords = ['DFlat_min_chord', 'AFlat_min_chord', 'B_maj_chord', 'B_maj_chord', 'GFlat_min_chord']
+            self.notes = ['DFlat_note', 'E_note', 'AFlat_note', 'DFlat5_note']
 
     def get_all_chords_and_notes(self):
         """
@@ -120,6 +187,7 @@ class Keys:
 
         return all_chords, all_notes
 
+
 def get_key_class(full_key_name):
     key_name = full_key_name.replace(' ', '').lower()
 
@@ -142,10 +210,10 @@ if __name__ == '__main__':
 
         for chord in chords:
             if chord not in config_data:
-                print(f"\"{chord}\": \"sample/{chord}.wav\"")
+                print(f"\"{chord}\": \"sample/{chord}.wav\",")
 
         for note in notes:
             if note not in config_data:
-                print(f"\"{note}\": \"sample/{note}.wav\"")
+                print(f"\"{note}\": \"sample/{note}.wav\",")
 
-    print(get_key_class('CMajor'))
+    # print(get_key_class('CMajor'))

@@ -57,31 +57,6 @@
 <div class="max-w-6xl mx-auto">
     <main class="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
-        <div id="history-section" class="lg:col-span-1 bg-gray-800 rounded-xl p-6 shadow-xl h-full">
-            <h2 class="text-2xl font-bold text-gray-200 mb-4">History</h2>
-            <div class="h-[40rem] overflow-y-scroll hide-scrollbar">
-                <div id="history-list" class="space-y-2">
-                    {% if history %}
-                        {% for key, song in history.items() %}
-                        <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700"
-                             onclick="selectSong('{{ key }}')">
-                            <div class="flex items-center space-x-4 flex-grow min-w-0">
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center album-cover" data-key="{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}">
-                                    <i class="fa-solid fa-music text-xl text-white"></i>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-2 ml-4">
-                                <span class="text-xs text-gray-400 whitespace-nowrap">{{ song.played }} plays</span>
-                                <i class="fa-solid fa-heart {% if song.liked %}text-red-500{% else %}text-gray-500{% endif %}"></i>
-                                <i class="fa-solid fa-thumbs-down {% if song.disliked %}text-blue-500{% else %}text-gray-500{% endif %}"></i>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
         <div class="lg:col-span-2 space-y-6">
             <div class="bg-gray-800 rounded-xl p-6 shadow-xl sticky top-8">
                 <h2 class="text-2xl font-bold text-gray-200 mb-4">Now Playing</h2>
@@ -216,6 +191,32 @@
             </div>
         </div>
         </div>
+
+
+        <div id="history-section" class="lg:col-span-1 bg-gray-800 rounded-xl p-6 shadow-xl h-full">
+            <h2 class="text-2xl font-bold text-gray-200 mb-4">History</h2>
+            <div class="h-[40rem] overflow-y-scroll hide-scrollbar">
+                <div id="history-list" class="space-y-2">
+                    {% if history %}
+                        {% for key, song in history.items() %}
+                        <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700"
+                             onclick="selectSong('{{ key }}')">
+                            <div class="flex items-center space-x-4 flex-grow min-w-0">
+                                <div class="w-12 h-12 rounded-lg flex items-center justify-center album-cover" data-key="{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}">
+                                    <i class="fa-solid fa-music text-xl text-white"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <span class="text-xs text-gray-400 whitespace-nowrap">{{ song.played }} plays</span>
+                                <i class="fa-solid fa-heart {% if song.liked %}text-red-500{% else %}text-gray-500{% endif %}"></i>
+                                <i class="fa-solid fa-thumbs-down {% if song.disliked %}text-blue-500{% else %}text-gray-500{% endif %}"></i>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </main>
     <footer class="text-center">
         <pre class="mt-2 text-gray-400"><a href="/">radio-md</a> by <a href="https://github.com/gabru-md" target="_blank">gabru-md</a></pre>
@@ -245,34 +246,50 @@
     };
 
     // Circle of Fifths color mapping - Based on your Keys class
+    // Circle of Fifths color mapping - Based on your Keys class
     const keyColorMap = {
         // Major keys from your Keys class
-        'C': 'key-c', 'CMajor': 'key-c', 'CMinor': 'key-cm',
-        'G': 'key-g', 'GMajor': 'key-g', 'GSharpMinor': 'key-gsm',
+        'C': 'key-c', 'CMajor': 'key-c',
+        'G': 'key-g', 'GMajor': 'key-g',
         'D': 'key-d', 'DMajor': 'key-d',
         'A': 'key-a', 'AMajor': 'key-a',
-        'E': 'key-e', 'EMajor': 'key-e', 'EFlatMajor': 'key-ds',
+        'E': 'key-e', 'EMajor': 'key-e',
+        'B': 'key-b', 'BMajor': 'key-b',
+        'F#': 'key-fs', 'FSharpMajor': 'key-fs',
+        'C#': 'key-cs', 'CSharpMajor': 'key-cs',
+        'G#': 'key-gs', 'GSharpMajor': 'key-gs',
+        'D#': 'key-ds', 'DSharpMajor': 'key-ds',
+        'A#': 'key-as', 'ASharpMajor': 'key-as',
         'F': 'key-f', 'FMajor': 'key-f',
 
         // Minor keys from your Keys class
-        'Am': 'key-am', 'AMinor': 'key-am', 'A_minor': 'key-am',
-        'Em': 'key-em', 'EMinor': 'key-em', 'E_minor': 'key-em',
-        'Bm': 'key-bm', 'BMinor': 'key-bm', 'B_minor': 'key-bm',
-        'Cm': 'key-cm',
-        'F#m': 'key-fsm', 'FSharpMinor': 'key-fsm', 'FSharp_minor': 'key-fsm',
-        'C#m': 'key-csm', 'CSharpMinor': 'key-csm', 'CSharp_minor': 'key-csm',
-        'Gm': 'key-gm', 'GMinor': 'key-gm', 'G_minor': 'key-gm',
-        'Fm': 'key-fm', 'FMinor': 'key-fm', 'F_minor': 'key-fm',
+        'Am': 'key-am', 'AMinor': 'key-am',
+        'Em': 'key-em', 'EMinor': 'key-em',
+        'Bm': 'key-bm', 'BMinor': 'key-bm',
+        'F#m': 'key-fsm', 'FSharpMinor': 'key-fsm',
+        'C#m': 'key-csm', 'CSharpMinor': 'key-csm',
+        'G#m': 'key-gsm', 'GSharpMinor': 'key-gsm',
+        'D#m': 'key-dsm', 'DSharpMinor': 'key-dsm',
+        'A#m': 'key-asm', 'ASharpMinor': 'key-asm',
+        'EFlatMajor': 'key-ds', 'BFlatMajor': 'key-as',
+        'Fm': 'key-fm', 'FMinor': 'key-fm',
+        'Cm': 'key-cm', 'CMinor': 'key-cm',
+        'Gm': 'key-gm', 'GMinor': 'key-gm',
+        'Dm': 'key-dm', 'DMinor': 'key-dm',
 
-        // Alternative notations
-        'C_maj': 'key-c', 'G_maj': 'key-g', 'D_maj': 'key-d',
-        'A_maj': 'key-a', 'E_maj': 'key-e', 'F_maj': 'key-f',
+        // Alternative notations (for compatibility)
         'A_min': 'key-am', 'E_min': 'key-em', 'B_min': 'key-bm',
-        'FSharp_min': 'key-fsm', 'CSharp_min': 'key-csm', 'GSharp_min': 'key-gsm', 'D_min':'key-dm',
+        'FSharp_min': 'key-fsm', 'CSharp_min': 'key-csm', 'GSharp_min': 'key-gsm',
+        'D_min':'key-dm', 'D_maj': 'key-d', 'G_maj': 'key-g', 'A_maj': 'key-a',
+        'F_maj': 'key-f',
+        'E_maj': 'key-e', 'B_maj': 'key-b', 'FSharp_maj': 'key-fs', 'ASharp_min': 'key-asm',
+        'CSharp_maj': 'key-cs',
         'EFlat_maj': 'key-ds', 'AFlat_maj': 'key-gs', 'BFlat_maj': 'key-as', 'DFlat_maj': 'key-cs',
-        'ADim': 'key-csm',
+        'ADim': 'key-csm', 'GSharp_maj': 'key-gs',
         'G_min': 'key-gm', 'F_min': 'key-fm', 'BFlat_min': 'key-asm',
-        'C_min':'key-cm',
+        'C_min':'key-cm', 'C_maj': 'key-c',
+        'DSharp_min': 'key-dsm',
+        'DFlat_min': 'key-csm',
         // Default
         'Unknown': 'key-unknown'
     };

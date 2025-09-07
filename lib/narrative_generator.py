@@ -98,7 +98,6 @@ class NarrativeGenerator:
         drums = None
         if enable_drums:
             kick_rhythm, hi_hats_rhythm = random.choice(self.drums_rhythm)
-            print(kick_rhythm, hi_hats_rhythm)
             kicks = [('Kick', offset) for offset in kick_rhythm]
             hi_hats = [('HiHat', offset) for offset in hi_hats_rhythm]
             drums = (kicks, hi_hats)

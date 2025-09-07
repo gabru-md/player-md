@@ -72,6 +72,7 @@ def create_app(player: Player, replayer: Player = None, player_task=None, radio_
     @app.route('/play')
     def play_radio():
         if player_task:
+            player.start_mixer()
             player_thread = threading.Thread(target=player_task, daemon=True)
             player_thread.start()
         return "Ok"
