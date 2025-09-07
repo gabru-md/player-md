@@ -7,5 +7,5 @@ My ukulele is my favorite instrument, and this project brings it to life in code
 
 ### Usage
 ```sh
-python3 radio.py --bpm 124 --bars 8 --narratives 10 --repeat 2
+python3 radio.py --bpm 165 --narratives 2 --repeat 2 --ui
 ```
