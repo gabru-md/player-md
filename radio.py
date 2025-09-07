@@ -106,7 +106,7 @@ def main():
             player.stop_mixer()
 
     if args.ui:
-        app = create_app(player, player_task)
+        app = create_app(player=player, player_task=player_task)
         app.run(host='0.0.0.0', port=5000, debug=True)
     else:
         player_task()

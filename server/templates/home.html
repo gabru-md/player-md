@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="30">
     <title>Radio-MD</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -12,7 +11,7 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-         /* ... existing styles ... */
+        /* ... existing styles ... */
         .hide-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -66,25 +65,26 @@
     <main class="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
         <div id="history-section" class="lg:col-span-1 bg-gray-800 rounded-xl p-6 shadow-xl h-full">
-            <h2 class="text-2xl font-bold text-gray-200 mb-4">Saved Tracks</h2>
+            <h2 class="text-2xl font-bold text-gray-200 mb-4">History</h2>
             <div class="h-[40rem] overflow-y-scroll hide-scrollbar">
                 <div id="history-list" class="space-y-2">
-                    {% for key, song in history.items() %}
-                    <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700"
-                         onclick="selectSong('{{ key }}')">
-                        <div class="flex items-center space-x-4 flex-grow min-w-0">
-                            <div class="w-12 h-12 rounded-lg flex items-center justify-center album-cover" data-key="{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}">
-                                <i class="fa-solid fa-music text-xl text-white"></i>
+                    {% if history %}
+                        {% for key, song in history.items() %}
+                        <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700"
+                             onclick="selectSong('{{ key }}')">
+                            <div class="flex items-center space-x-4 flex-grow min-w-0">
+                                <div class="w-12 h-12 rounded-lg flex items-center justify-center album-cover" data-key="{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}">
+                                    <i class="fa-solid fa-music text-xl text-white"></i>
+                                </div>
                             </div>
-                            <span class="flex-grow text-sm sm:text-base truncate">{{ song.key }}</span>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <span class="text-xs text-gray-400 whitespace-nowrap">{{ song.played }} plays</span>
+                                <i class="fa-solid fa-heart {% if song.liked %}text-red-500{% else %}text-gray-500{% endif %}"></i>
+                                <i class="fa-solid fa-thumbs-down {% if song.disliked %}text-blue-500{% else %}text-gray-500{% endif %}"></i>
+                            </div>
                         </div>
-                        <div class="flex items-center space-x-2 ml-4">
-                            <span class="text-xs text-gray-400 whitespace-nowrap">{{ song.played }} plays</span>
-                            <i class="fa-solid fa-heart {% if song.liked %}text-red-500{% else %}text-gray-500{% endif %}"></i>
-                            <i class="fa-solid fa-thumbs-down {% if song.disliked %}text-blue-500{% else %}text-gray-500{% endif %}"></i>
-                        </div>
-                    </div>
-                    {% endfor %}
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -95,7 +95,11 @@
                 <div id="now-playing-info" class="text-gray-400 text-center">
                     {% if currently_playing %}
                     <i id="now-playing-disc" class="fa-solid fa-compact-disc text-purple-400 fa-spin text-5xl mb-4"></i>
-                    <p>Playing the key of {{ currently_playing_key }}</p>
+                        {% if player_name == 'Replayer' %}
+                            <p>Replaying: {{ currently_playing_key }}</p>
+                        {% else %}
+                            <p>Playing: {{ currently_playing_key }}</p>
+                        {% endif %}
                     {% else %}
                     <button onclick="playRadio()"><i class="fa-solid fa-play text-5xl mb-4 text-purple-400"></i>
                     </button>
@@ -107,24 +111,26 @@
                 <h2 class="text-2xl font-bold text-gray-200 mb-4">Recent History</h2>
                 <div class="h-[30rem] overflow-y-scroll hide-scrollbar">
                     <div id="current-history-list" class="space-y-2">
-                        {% for key, song in current_history.items()|reverse %}
-                        <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700"
-                             onclick="selectSong('{{ key }}')">
-                            <div class="flex items-center space-x-4 flex-grow min-w-0">
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center album-cover" data-key="{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}">
-                                    <i class="fa-solid fa-music text-xl text-white"></i>
+                        {% if current_history %}
+                            {% for key, song in current_history.items()|reverse %}
+                            <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700"
+                                 onclick="selectSong('{{ key }}')">
+                                <div class="flex items-center space-x-4 flex-grow min-w-0">
+                                    <div class="w-12 h-12 rounded-lg flex items-center justify-center album-cover" data-key="{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}">
+                                        <i class="fa-solid fa-music text-xl text-white"></i>
+                                    </div>
+                                    <span class="flex-grow text-sm sm:text-base truncate">{{ key.split('-')[0] }}</span>
                                 </div>
-                                <span class="flex-grow text-sm sm:text-base truncate">{{ key.split('-')[0] }}</span>
+                                <div class="flex items-center space-x-2 ml-4">
+                                    <span class="text-xs text-gray-400 whitespace-nowrap">{{ song.played }} plays</span>
+                                    <i class="fa-solid fa-heart {% if song.liked %}text-red-500{% else %}text-gray-500{% endif %}"
+                                       onclick="like('{{ key }}')"></i>
+                                    <i class="fa-solid fa-thumbs-down {% if song.disliked %}text-blue-500{% else %}text-gray-500{% endif %}"
+                                       onclick="dislike('{{ key }}')"></i>
+                                </div>
                             </div>
-                            <div class="flex items-center space-x-2 ml-4">
-                                <span class="text-xs text-gray-400 whitespace-nowrap">{{ song.played }} plays</span>
-                                <i class="fa-solid fa-heart {% if song.liked %}text-red-500{% else %}text-gray-500{% endif %}"
-                                   onclick="like('{{ key }}')"></i>
-                                <i class="fa-solid fa-thumbs-down {% if song.disliked %}text-blue-500{% else %}text-gray-500{% endif %}"
-                                   onclick="dislike('{{ key }}')"></i>
-                            </div>
-                        </div>
-                        {% endfor %}
+                            {% endfor %}
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -143,7 +149,7 @@
                     <div class="mt-4 mb-6">
                         <h4 class="text-sm font-semibold text-white mb-2">Signature</h4>
                         <div id="signature-visualizer" class="flex flex-wrap gap-1">
-                            </div>
+                        </div>
                     </div>
                     <div class="space-y-3">
                         <div class="flex justify-between items-center">
@@ -168,7 +174,7 @@
                 </div>
             </div>
 
-            </div>
+        </div>
 
     </main>
 </div>
@@ -176,39 +182,40 @@
 <script>
     let selectedSongKey = null;
     const historyData = {
-        {% for key, song in history.items() %}
-        "{{ key }}": {
-            played: {{ song.played }},
-            liked: {{ song.liked|lower }},
-            disliked: {{ song.disliked|lower }},
-            key: "{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}",
-        },
-        {% endfor %}
+    {% for key, song in history.items() %}
+    "{{ key }}": {
+        played: {{ song.played }},
+        liked: {{ song.liked|lower }},
+        disliked: {{ song.disliked|lower }},
+        key: "{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}",
+    },
+    {% endfor %}
 
-        {% for key, song in current_history.items() %}
-        "{{ key }}": {
-            played: {{ song.played }},
-            liked: {{ song.liked|lower }},
-            disliked: {{ song.disliked|lower }},
-            key: "{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}",
-        },
-        {% endfor %}
+    {% for key, song in current_history.items() %}
+    "{{ key }}": {
+        played: {{ song.played }},
+        liked: {{ song.liked|lower }},
+        disliked: {{ song.disliked|lower }},
+        key: "{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}",
+    },
+    {% endfor %}
     };
 
     // Circle of Fifths color mapping - Based on your Keys class
     const keyColorMap = {
         // Major keys from your Keys class
-        'C': 'key-c', 'CMajor': 'key-c',
-        'G': 'key-g', 'GMajor': 'key-g',
+        'C': 'key-c', 'CMajor': 'key-c', 'CMinor': 'key-cm',
+        'G': 'key-g', 'GMajor': 'key-g', 'GSharpMinor': 'key-gsm',
         'D': 'key-d', 'DMajor': 'key-d',
         'A': 'key-a', 'AMajor': 'key-a',
-        'E': 'key-e', 'EMajor': 'key-e',
+        'E': 'key-e', 'EMajor': 'key-e', 'EFlatMajor': 'key-ds',
         'F': 'key-f', 'FMajor': 'key-f',
 
         // Minor keys from your Keys class
         'Am': 'key-am', 'AMinor': 'key-am', 'A_minor': 'key-am',
         'Em': 'key-em', 'EMinor': 'key-em', 'E_minor': 'key-em',
         'Bm': 'key-bm', 'BMinor': 'key-bm', 'B_minor': 'key-bm',
+        'Cm': 'key-cm',
         'F#m': 'key-fsm', 'FSharpMinor': 'key-fsm', 'FSharp_minor': 'key-fsm',
         'C#m': 'key-csm', 'CSharpMinor': 'key-csm', 'CSharp_minor': 'key-csm',
         'Gm': 'key-gm', 'GMinor': 'key-gm', 'G_minor': 'key-gm',
@@ -218,9 +225,11 @@
         'C_maj': 'key-c', 'G_maj': 'key-g', 'D_maj': 'key-d',
         'A_maj': 'key-a', 'E_maj': 'key-e', 'F_maj': 'key-f',
         'A_min': 'key-am', 'E_min': 'key-em', 'B_min': 'key-bm',
-        'F#_min': 'key-fsm', 'C#_min': 'key-csm', 'D_min':'key-dm',
-        'G_min': 'key-gm', 'F_min': 'key-fm',
-
+        'FSharp_min': 'key-fsm', 'CSharp_min': 'key-csm', 'GSharp_min': 'key-gsm', 'D_min':'key-dm',
+        'EFlat_maj': 'key-ds', 'AFlat_maj': 'key-gs', 'BFlat_maj': 'key-as', 'DFlat_maj': 'key-cs',
+        'ADim': 'key-csm',
+        'G_min': 'key-gm', 'F_min': 'key-fm', 'BFlat_min': 'key-asm',
+        'C_min':'key-cm',
         // Default
         'Unknown': 'key-unknown'
     };
@@ -248,6 +257,8 @@
     function selectSong(key) {
         selectedSongKey = key;
         const song = historyData[key];
+
+        console.log(song);
 
         // Update song details
         document.getElementById('song-title').textContent = "Key: " + song.key;
@@ -330,7 +341,7 @@
             const response = await fetch('/like', {
                 method: 'POST',
                 headers: {
-                'Content-Type': 'application/json'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ key: signatureKey })
             });
@@ -349,7 +360,7 @@
             const response = await fetch('/dislike', {
                 method: 'POST',
                 headers: {
-                'Content-Type': 'application/json'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ key: signatureKey })
             });
@@ -367,6 +378,41 @@
     // Apply colors when the page loads
     document.addEventListener('DOMContentLoaded', function() {
         applyKeyColors();
+        addSignatureVisualizers();
+        {% if currently_playing %}
+        selectSong("{{ currently_playing }}")
+        {% endif %}
     });
+
+    function addSignatureVisualizers() {
+        const historyItems = document.querySelectorAll('#current-history-list .p-4');
+        historyItems.forEach(item => {
+            const key = item.getAttribute('onclick').match(/'([^']+)'/)[1];
+            if (key) {
+                const visualizerDiv = document.createElement('div');
+                visualizerDiv.className = 'flex flex-wrap gap-1 flex-grow justify-end';
+
+                const bars = key.split('_^_');
+                bars.forEach(barStr => {
+                    const parts = barStr.split(':');
+                    if (parts[0]) {
+                        const firstChord = parts[0].split(',')[0].replace(/_chord|-.*$/, '').trim();
+                        const barDiv = document.createElement('div');
+                        const color = getKeyColorClass(firstChord);
+                        barDiv.className = `w-2 h-2 rounded-sm ${color}`;
+                        barDiv.title = firstChord;
+                        visualizerDiv.appendChild(barDiv);
+                    }
+                });
+
+                // Find the existing play count and icons container and insert before it
+                const iconContainer = item.querySelector('.space-x-2');
+                if (iconContainer) {
+                    item.insertBefore(visualizerDiv, iconContainer);
+                }
+            }
+        });
+    }
+
 </script>
 </html>

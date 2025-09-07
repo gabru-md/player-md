@@ -1,9 +1,12 @@
-import json
 import time
 from enum import Enum
+
+from lib.history.history_manager import HistoryManager
 from lib.player.sample_loader import load_samples
 
 import pygame
+
+MIXER_RUNNING = False
 
 
 class Channels(Enum):
@@ -12,7 +15,7 @@ class Channels(Enum):
 
 
 class Player:
-    def __init__(self, bpm=72, sample_config="sample_config.json"):
+    def __init__(self, name="Radio", bpm=72, sample_config="sample_config.json"):
         """
         Initializes the music player.
 
@@ -20,6 +23,7 @@ class Player:
             bpm (int): Beats per minute for tempo control.
             sample_config (str): The path to the JSON file with sample mappings.
         """
+        self.name = name
         self.bpm = bpm
         self.beat_duration_ms = (60 / bpm) * 1000
         self.phase_shift_beats = 0
@@ -31,13 +35,12 @@ class Player:
         self.melody_channel = pygame.mixer.Channel(Channels.MELODY_CHANNEL.value)
         self.samples = load_samples(sample_config)
 
-        self.history = {}
         self.currently_playing = None
         self.currently_playing_key = None
+        self.history_manager = HistoryManager()
 
-    def set_phase_shift(self, shift_in_beats):
-        """Allows for a global timing shift, useful for syncing."""
-        self.phase_shift_beats = shift_in_beats
+        self.pause = False
+        self.playing = False
 
     def play_music(self, narrative_data, signature_key=None, metadata=None):
         """
@@ -60,10 +63,26 @@ class Player:
 
         start_time_ms = pygame.time.get_ticks()
 
+        if type(self.currently_playing_key) == str:
+            musical_key = self.currently_playing_key
+        else:
+            musical_key = self.currently_playing_key.__class__.__name__
+
+        self.history_manager.add_to_history(signature_key=signature_key,
+                                            musical_key=musical_key)
+
         # To manage both chord and melody timing, we will flatten both into a single,
         # chronologically sorted list of events.
         event_list = []
         for bar_index, bar_data in enumerate(narrative_data):
+
+            while self.pause:
+                # makes the call blocking
+                print("Player is paused")
+                self.playing = False
+                time.sleep(1)
+
+            self.playing = True
             bar_start_beat = bar_index * 4
 
             # Add all chord events for this bar to the event list
@@ -98,11 +117,11 @@ class Player:
             sound = self.samples.get(event['name'])
             if sound:
                 if event['type'] == 'chord':
-                    self.melody_channel.stop() # to counter overlap
+                    self.melody_channel.stop()  # to counter overlap
                     self.chords_channel.play(sound)
                     # print(f"Chord: {event['name']}")
                 else:
-                    self.melody_channel.stop() # to counter overlap
+                    self.melody_channel.stop()  # to counter overlap
                     self.melody_channel.play(sound)
                     # print(f"  Note: {event['name']}")
             else:
@@ -114,34 +133,39 @@ class Player:
         if final_wait_time > 0:
             pygame.time.wait(int(final_wait_time))
 
-        if signature_key:
-            if signature_key in self.history:
-                self.history[signature_key]['played'] += 1
-            else:
-                self.history[signature_key] = {'played': 1, 'liked': False, 'disliked': False, 'key': self.currently_playing_key.__class__.__name__}
+        self.history_manager.incr_played(signature_key=signature_key)
 
         self.currently_playing = None
         self.currently_playing_key = None
+        self.playing = False
 
     def save_history(self, file_name=None):
-        if file_name is None:
-            file_name = f"history/{time.time()}.json"
-        with open(file_name, 'w') as history_file:
-            json.dump(self.history, history_file)
-        print(f"History saved to {file_name}")
+        self.history_manager.save_history(file_name=file_name)
 
     def stop_mixer(self):
-        pygame.mixer.quit()
+        global MIXER_RUNNING
+        if MIXER_RUNNING:
+            pygame.mixer.quit()
+            MIXER_RUNNING = True
 
     def start_mixer(self):
-        pygame.mixer.init()
+        global MIXER_RUNNING
+        if not MIXER_RUNNING:
+            print(f"{self.name} starting mixer")
+            pygame.mixer.init()
+            MIXER_RUNNING = True
 
     def like(self, signature_key):
-        if signature_key in self.history:
-            self.history[signature_key]['liked'] = True
-            self.history[signature_key]['disliked'] = False
+        self.history_manager.like(signature_key=signature_key)
 
     def dislike(self, signature_key):
-        if signature_key in self.history:
-            self.history[signature_key]['disliked'] = True
-            self.history[signature_key]['liked'] = False
+        self.history_manager.dislike(signature_key=signature_key)
+
+    def set_pause(self):
+        self.pause = True
+
+    def set_unpause(self):
+        self.pause = False
+
+    def is_playing(self):
+        return self.playing

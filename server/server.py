@@ -1,6 +1,5 @@
-import json
-import os
 import threading
+import time
 
 from lib.player.player import Player
 from flask import Flask, render_template, request
@@ -8,49 +7,44 @@ from flask import Flask, render_template, request
 from lib.signature import parse_signature_key
 
 
-def create_app(player: Player, player_task=None):
-    history_folder = "history"
+def create_app(player: Player, replayer: Player = None, player_task=None):
     player_task = player_task
     player = player
+    if replayer is None:
+        replayer = Player(name="Replayer", bpm=player.bpm)
     app = Flask(__name__)
 
     @app.route("/")
     def home():
-        all_json_history = {}
-        for file in os.listdir(history_folder):
-            if file.endswith(".json"):
-                with open(os.path.join(history_folder, file)) as json_history_file:
-                    try:
-                        history_from_file = json.load(json_history_file)
-                        for song_signature, data in history_from_file.items():
-                            if song_signature in all_json_history:
-                                # If the song exists, combine the data
-                                all_json_history[song_signature]['played'] += data.get('played', 0)
-                                all_json_history[song_signature]['liked'] = all_json_history[song_signature].get(
-                                    'liked', False) or data.get('liked', False)
-                                all_json_history[song_signature]['disliked'] = all_json_history[song_signature].get(
-                                    'disliked', False) or data.get('disliked', False)
-                            else:
-                                # If the song is new, add it to the history
-                                all_json_history[song_signature] = data
-                    except Exception as e:
-                        print(e)
+        all_json_history = player.history_manager.load_history()
 
-        sorted_history = sorted(
-            all_json_history.items(),
-            key=lambda item: (item[1].get('liked', False), item[1].get('played', 0)),
-            reverse=True
-        )
+        if all_json_history is not None:
+            sorted_history = sorted(
+                all_json_history.items(),
+                key=lambda item: (item[1].get('liked', False), item[1].get('played', 0)),
+                reverse=True
+            )
 
-        number_of_songs_to_display = 15
-        top_n_history = dict(sorted_history[:number_of_songs_to_display])
+            number_of_songs_to_display = 15
+            top_n_history = dict(sorted_history[:number_of_songs_to_display])
+        else:
+            top_n_history = {}
 
-        current_history = player.history
+        current_history = player.history_manager.history
         currently_playing = player.currently_playing
-        currently_playing_key = player.currently_playing_key.__class__.__name__
+        player_name = player.name
+
+        if player.pause and not player.playing:
+            current_history = replayer.history_manager.history
+            currently_playing = replayer.currently_playing
+            currently_playing_key = replayer.currently_playing_key
+            player_name = replayer.name
+        else:
+            currently_playing_key = player.currently_playing_key.__class__.__name__
 
         return render_template('home.html', history=top_n_history, current_history=current_history,
-                               currently_playing=currently_playing, currently_playing_key=currently_playing_key)
+                               currently_playing=currently_playing, currently_playing_key=currently_playing_key,
+                               player_name=player_name)
 
     @app.route('/play')
     def play_radio():
@@ -68,14 +62,24 @@ def create_app(player: Player, player_task=None):
             narrative_data = parse_signature_key(signature_key)
 
             def play_song():
-                single_player = Player(bpm=player.bpm)
                 try:
-                    single_player.play_music(narrative_data=narrative_data, signature_key=signature_key, metadata={'key': song_key})
+                    while replayer.is_playing():
+                        print("Waiting for replayer to finish")
+                        time.sleep(1)
+                    player.set_pause()
+                    while player.is_playing():
+                        print("Waiting for Main player to pause")
+                        time.sleep(1)
+                    replayer.start_mixer()
+                    replayer.play_music(narrative_data=narrative_data, signature_key=signature_key,
+                                        metadata={'key': song_key})
                 except Exception as e:
                     print(e)
                     raise e
                 finally:
-                    single_player.save_history()
+                    replayer.save_history()
+                    time.sleep(2)
+                    player.set_unpause()
 
             player_thread = threading.Thread(target=play_song, daemon=True)
             player_thread.start()
@@ -88,7 +92,7 @@ def create_app(player: Player, player_task=None):
         player.like(signature_key)
         return "Ok"
 
-    @app.route('/dislike')
+    @app.route('/dislike', methods=['POST'])
     def dislike():
         json_data = request.json
         signature_key = json_data['key']

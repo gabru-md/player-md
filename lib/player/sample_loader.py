@@ -22,7 +22,6 @@ def load_samples(sample_path, compressor: Compressor = Compressor(), note_compre
             else:
                 sound = note_compressor.process_sound(sound)
         else: # chords
-            print(name)
             if chord_eq:
                 sound = chord_eq.process_sound(sound)
             sound = compressor.process_sound(sound)
