@@ -65,7 +65,31 @@
 
     <main class="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
-        <div class="lg:col-span-1 space-y-6">
+        <div id="history-section" class="lg:col-span-1 bg-gray-800 rounded-xl p-6 shadow-xl h-full">
+            <h2 class="text-2xl font-bold text-gray-200 mb-4">Saved Tracks</h2>
+            <div class="h-[40rem] overflow-y-scroll hide-scrollbar">
+                <div id="history-list" class="space-y-2">
+                    {% for key, song in history.items() %}
+                    <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700"
+                         onclick="selectSong('{{ key }}')">
+                        <div class="flex items-center space-x-4 flex-grow min-w-0">
+                            <div class="w-12 h-12 rounded-lg flex items-center justify-center album-cover" data-key="{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}">
+                                <i class="fa-solid fa-music text-xl text-white"></i>
+                            </div>
+                            <span class="flex-grow text-sm sm:text-base truncate">{{ song.key }}</span>
+                        </div>
+                        <div class="flex items-center space-x-2 ml-4">
+                            <span class="text-xs text-gray-400 whitespace-nowrap">{{ song.played }} plays</span>
+                            <i class="fa-solid fa-heart {% if song.liked %}text-red-500{% else %}text-gray-500{% endif %}"></i>
+                            <i class="fa-solid fa-thumbs-down {% if song.disliked %}text-blue-500{% else %}text-gray-500{% endif %}"></i>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-6">
             <div class="bg-gray-800 rounded-xl p-6 shadow-xl sticky top-8">
                 <h2 class="text-2xl font-bold text-gray-200 mb-4">Now Playing</h2>
                 <div id="now-playing-info" class="text-gray-400 text-center">
@@ -106,30 +130,6 @@
             </div>
         </div>
 
-        <div id="history-section" class="lg:col-span-2 bg-gray-800 rounded-xl p-6 shadow-xl h-full">
-            <h2 class="text-2xl font-bold text-gray-200 mb-4">Saved Tracks</h2>
-            <div class="h-[40rem] overflow-y-scroll hide-scrollbar">
-                <div id="history-list" class="space-y-2">
-                    {% for key, song in history.items() %}
-                    <div class="flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all duration-200 hover:bg-gray-700 bg-gray-700"
-                         onclick="selectSong('{{ key }}')">
-                        <div class="flex items-center space-x-4 flex-grow min-w-0">
-                            <div class="w-12 h-12 rounded-lg flex items-center justify-center album-cover" data-key="{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}">
-                                <i class="fa-solid fa-music text-xl text-white"></i>
-                            </div>
-                            <span class="flex-grow text-sm sm:text-base truncate">{{ song.key }}</span>
-                        </div>
-                        <div class="flex items-center space-x-2 ml-4">
-                            <span class="text-xs text-gray-400 whitespace-nowrap">{{ song.played }} plays</span>
-                            <i class="fa-solid fa-heart {% if song.liked %}text-red-500{% else %}text-gray-500{% endif %}"></i>
-                            <i class="fa-solid fa-thumbs-down {% if song.disliked %}text-blue-500{% else %}text-gray-500{% endif %}"></i>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
         <div class="lg:col-span-1 space-y-6">
             <div id="song-details" class="bg-gray-800 rounded-xl p-6 shadow-xl">
                 <h2 class="text-2xl font-bold text-gray-200 mb-4">Song Details</h2>
@@ -139,6 +139,11 @@
                             <i id="detail-music-icon" class="fa-solid fa-music text-5xl text-white"></i>
                         </div>
                         <h3 id="song-title" class="text-xl font-bold text-white mb-2">Pick a song</h3>
+                    </div>
+                    <div class="mt-4 mb-6">
+                        <h4 class="text-sm font-semibold text-white mb-2">Signature</h4>
+                        <div id="signature-visualizer" class="flex flex-wrap gap-1">
+                            </div>
                     </div>
                     <div class="space-y-3">
                         <div class="flex justify-between items-center">
@@ -210,11 +215,11 @@
         'Fm': 'key-fm', 'FMinor': 'key-fm', 'F_minor': 'key-fm',
 
         // Alternative notations
-        'C major': 'key-c', 'G major': 'key-g', 'D major': 'key-d',
-        'A major': 'key-a', 'E major': 'key-e', 'F major': 'key-f',
-        'A minor': 'key-am', 'E minor': 'key-em', 'B minor': 'key-bm',
-        'F# minor': 'key-fsm', 'C# minor': 'key-csm',
-        'G minor': 'key-gm', 'F minor': 'key-fm',
+        'C_maj': 'key-c', 'G_maj': 'key-g', 'D_maj': 'key-d',
+        'A_maj': 'key-a', 'E_maj': 'key-e', 'F_maj': 'key-f',
+        'A_min': 'key-am', 'E_min': 'key-em', 'B_min': 'key-bm',
+        'F#_min': 'key-fsm', 'C#_min': 'key-csm', 'D_min':'key-dm',
+        'G_min': 'key-gm', 'F_min': 'key-fm',
 
         // Default
         'Unknown': 'key-unknown'
@@ -257,6 +262,25 @@
         albumCover.className = albumCover.className.replace(/key-\w+/g, '');
         // Add the new background color class
         albumCover.classList.add(colorClass);
+
+        // *** New logic to render the signature visualization ***
+        const visualizer = document.getElementById('signature-visualizer');
+        visualizer.innerHTML = ''; // Clear existing visual
+
+        if (song.key && song.key !== 'Unknown') {
+            const bars = key.split('_^_');
+            bars.forEach(barStr => {
+                const parts = barStr.split(':');
+                if (parts[0]) {
+                    const firstChord = parts[0].split(',')[0].replace(/_chord|-.*$/, '').trim();
+                    const barDiv = document.createElement('div');
+                    const color = getKeyColorClass(firstChord);
+                    barDiv.className = `w-4 h-4 rounded-sm ${color}`;
+                    barDiv.title = firstChord;
+                    visualizer.appendChild(barDiv);
+                }
+            });
+        }
 
         // Show song details panel
         document.getElementById('song-details').classList.remove('hidden');
