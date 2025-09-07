@@ -1,10 +1,12 @@
 import pygame
 import json
 
-from lib.audio.audio_compressor import AudioCompressor
+from lib.audio.compressor import Compressor
+from lib.audio.equalizer import Equalizer
 
 
-def load_samples(sample_path, compressor: AudioCompressor = AudioCompressor(), note_compressor: AudioCompressor = AudioCompressor(gain=0.8), slide_note_compressor = AudioCompressor(gain=0.6, attack_ms=50)):
+def load_samples(sample_path, compressor: Compressor = Compressor(), note_compressor: Compressor = Compressor(gain=0.8),
+                 slide_note_compressor=Compressor(gain=0.6, attack_ms=50), chord_eq=Equalizer(center_frequency=170, gain_db=12)):
     """
     Loads sample from a dictionary of 'note_name': 'file_path'.
     In a real scenario, this would load the actual audio data into memory.
@@ -14,12 +16,15 @@ def load_samples(sample_path, compressor: AudioCompressor = AudioCompressor(), n
     # print("Loading sample...")
     for name, path in samples.items():
         sound = pygame.mixer.Sound(path)
-        if name.endswith("_note.wav"):
-            if name.endswith("_slide_note.wav"):
+        if name.endswith("_note"):
+            if name.endswith("_slide_note"):
                 sound = slide_note_compressor.process_sound(sound)
             else:
                 sound = note_compressor.process_sound(sound)
-        elif compressor:
+        else: # chords
+            print(name)
+            if chord_eq:
+                sound = chord_eq.process_sound(sound)
             sound = compressor.process_sound(sound)
 
         samples[name] = sound

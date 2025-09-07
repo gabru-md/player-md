@@ -1,7 +1,6 @@
 import json
 import os
 import threading
-from crypt import methods
 
 from lib.player.player import Player
 from flask import Flask, render_template, request
@@ -21,7 +20,6 @@ def create_app(player: Player, player_task=None):
         for file in os.listdir(history_folder):
             if file.endswith(".json"):
                 with open(os.path.join(history_folder, file)) as json_history_file:
-                    # check if history looks like: {'song_signature': {'played': 1, 'liked': False, 'disliked': False}}
                     try:
                         history_from_file = json.load(json_history_file)
                         for song_signature, data in history_from_file.items():

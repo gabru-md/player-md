@@ -2,7 +2,7 @@ import pygame
 import numpy as np
 
 
-class AudioCompressor:
+class Compressor:
     """
     A simple audio compressor that processes Pygame Sound objects.
 
