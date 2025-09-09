@@ -76,11 +76,25 @@ class NarrativeGenerator:
         self.drums_rhythm = [
             # kick , hi hat
             ([0, 1, 2, 3], [0.25, 0.75, 1.50, 2.50, 3.50]),
-            ([0, 2], [1, 3]),
-            ([], [0, 1, 2, 3])
+            ([0, 2], [1, 1.5, 3]),
+            ([], [0, 1, 2, 3]),
+            ([], [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5]),
+            ([0, 1, 2, 3], []),
+            ([], [])
         ]
 
-    def generate_narrative(self, key, bars=8, enable_drums=True):
+        self.bass_rhythm_patterns = [
+            [0],
+            [1],
+            [2],
+            [3],
+            [0, 1],
+            [0, 2],
+            [1, 2, 2.5],
+            [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5]
+        ]
+
+    def generate_narrative(self, key, bars=8, enable_drums=True, enable_bass=True):
         """
         Generates a list of Bar objects, each containing a chord and
         the melody notes with their specific rhythms for that bar.
@@ -95,11 +109,22 @@ class NarrativeGenerator:
         pattern_name, selected_pattern = random.choice(list(self.chord_patterns.items()))
         chord_progression = []
 
+        bass_rhythm = []
+        bass_note = None
+
+        if enable_bass:
+            bass_rhythm = random.choice(self.bass_rhythm_patterns) # bass remains fixed
+            bass_note = get_bass_note(key.notes[0])
+
+
         drums = None
         if enable_drums:
             kick_rhythm, hi_hats_rhythm = random.choice(self.drums_rhythm)
             kicks = [('Kick', offset) for offset in kick_rhythm]
             hi_hats = [('HiHat', offset) for offset in hi_hats_rhythm]
+            if len(kicks) == 0:
+                ## no bass note just buildup
+                bass_note = None
             drums = (kicks, hi_hats)
 
         for i in range(bars):
@@ -110,6 +135,7 @@ class NarrativeGenerator:
             safe_chord_degree = min(chord_degree, len(chords_in_key) - 1)
             chord_progression.append(chords_in_key[safe_chord_degree])
 
+        print(f"{bass_note} : {key.notes[0]} bass note")
         # --- Section 1: Conversation (Bars 1-2) ---
         for bar in range(2):
             # Select a random rhythm pattern for each bar
@@ -117,32 +143,32 @@ class NarrativeGenerator:
             melody_notes = [(random.choice(notes_in_key), offset) for offset in melody_rhythm]
             simple_chord_rhythm = random.choice(self.simple_chord_rhythm_patterns)
             chords = [(chord_progression[bar], offset) for offset in simple_chord_rhythm]
-            bass_line = convert_chords_into_bass_line(chords)
-            narrative_data.append(Bar(chords, melody_notes, drums=drums, bass=bass_line))
+            bass = [(bass_note, offset) for offset in bass_rhythm]
+            narrative_data.append(Bar(chords, melody_notes, drums=drums, bass=bass))
 
         # --- Section 2: Silence (Bar 3) ---
         melody_rhythm = random.choice(self.silence_rhythm_patterns)
         melody_notes = [(random.choice(notes_in_key), offset) for offset in melody_rhythm]
         simple_chord_rhythm = random.choice(self.simple_chord_rhythm_patterns)
         chords = [(chord_progression[2], offset) for offset in simple_chord_rhythm]
-        bass_line = convert_chords_into_bass_line(chords)
-        narrative_data.append(Bar(chords, melody_notes, drums=drums, bass=bass_line))
+        bass = [(bass_note, offset) for offset in bass_rhythm]
+        narrative_data.append(Bar(chords, melody_notes, drums=drums, bass=bass))
 
         # --- Section 3: Conversation (Bar 4) ---
         melody_rhythm = random.choice(self.rhythm_patterns)
         melody_notes = [(random.choice(notes_in_key), offset) for offset in melody_rhythm]
         simple_chord_rhythm = random.choice(self.simple_chord_rhythm_patterns)
         chords = [(chord_progression[3], offset) for offset in simple_chord_rhythm]
-        bass_line = convert_chords_into_bass_line(chords)
-        narrative_data.append(Bar(chords, melody_notes, drums=drums, bass=bass_line))
+        bass = [(bass_note, offset) for offset in bass_rhythm]
+        narrative_data.append(Bar(chords, melody_notes, drums=drums, bass=bass))
 
         # --- Section 4: Silence (Bar 5) ---
         melody_rhythm = random.choice(self.silence_rhythm_patterns)
         melody_notes = [(random.choice(notes_in_key), offset) for offset in melody_rhythm]
         simple_chord_rhythm = random.choice(self.simple_chord_rhythm_patterns)
         chords = [(chord_progression[4], offset) for offset in simple_chord_rhythm]
-        bass_line = convert_chords_into_bass_line(chords)
-        narrative_data.append(Bar(chords, melody_notes, drums=drums, bass=bass_line))
+        bass = [(bass_note, offset) for offset in bass_rhythm]
+        narrative_data.append(Bar(chords, melody_notes, drums=drums, bass=bass))
 
         # --- Section 5: Buildup & Tension (Bars 6-7) ---
         for bar in range(2):
@@ -150,29 +176,29 @@ class NarrativeGenerator:
             melody_notes = [(random.choice(notes_in_key), offset) for offset in melody_rhythm]
             buildup_chord_rhythm = random.choice(self.buildup_chord_rhythm_patterns)
             chords = [(chord_progression[5 + bar], offset) for offset in buildup_chord_rhythm]
-            bass_line = convert_chords_into_bass_line(chords)
-            narrative_data.append(Bar(chords, melody_notes, drums=drums, bass=bass_line))
+            bass = [(bass_note, offset) for offset in bass_rhythm]
+            narrative_data.append(Bar(chords, melody_notes, drums=drums, bass=bass))
 
         # --- Section 6: Release (Bar 8) ---
         melody_rhythm = random.choice(self.release_rhythm_patterns)
         melody_notes = [(random.choice(notes_in_key), offset) for offset in melody_rhythm]
         release_chord_rhythm = random.choice(self.release_chord_rhythm_patterns)
         chords = [(chord_progression[7], offset) for offset in release_chord_rhythm]
-        bass_line = convert_chords_into_bass_line(chords)
-        narrative_data.append(Bar(chords, melody_notes, drums=drums, bass=bass_line))
+        bass = [(bass_note, offset) for offset in bass_rhythm]
+        narrative_data.append(Bar(chords, melody_notes, drums=drums, bass=bass))
 
         return narrative_data, make_signature_key(narrative_data)
 
 def convert_chords_into_bass_line(chords):
     bass_line = []
-    for chord, offset in chords:
+    for chord, _ in chords:
         bass_note = get_bass_note(chord)
         if bass_note:
-            bass_line.append((bass_note, offset))
+            bass_line.append((bass_note, ))
     return bass_line
 
-def get_bass_note(chord):
-    key_note = chord.split('_')[0]
+def get_bass_note(note):
+    key_note = note.split('_')[0]
     bass_note_key = get_note(key_note, '_bass')
     bass4_note_key = get_note(key_note, '4_bass')
 

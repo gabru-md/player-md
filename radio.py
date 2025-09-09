@@ -89,6 +89,7 @@ def main():
     parser.add_argument("--ui", action="store_true", help="Enable web ui using flask")
     parser.add_argument("--keys", type=str, default="C,G,E,G", help="Keys that you want to play (in order)")
     parser.add_argument("--drums", action="store_true", help="Enable drums to be played along with narrative")
+    parser.add_argument("--bass", action="store_true", help="Enable bass to be played along with narrative")
 
     args = parser.parse_args()
 
@@ -113,7 +114,7 @@ def main():
                 total_number_of_plays = args.cycle * len(keys_to_play) * args.narratives * args.repeat
                 for key in [k() for k in keys_to_play]:
                     for _ in range(args.narratives):
-                        narrative_data, signature_key = generator.generate_narrative(key=key, bars=8, enable_drums=args.drums)
+                        narrative_data, signature_key = generator.generate_narrative(key=key, bars=8, enable_drums=args.drums, enable_bass=args.bass)
                         for _ in range(args.repeat):
                             metadata = {'key': key}
                             player.play_music(narrative_data=narrative_data, signature_key=signature_key,

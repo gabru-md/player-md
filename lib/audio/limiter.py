@@ -2,8 +2,10 @@ import pygame
 import pygame.sndarray as sndarray
 import numpy as np
 
+from lib.audio.plugin import AudioPlugin
 
-class Limiter:
+
+class Limiter(AudioPlugin):
     """
     A robust audio limiter that processes Pygame Sound objects.
 
@@ -131,7 +133,7 @@ class Limiter:
         return output
 
 
-class FastLimiter:
+class FastLimiter(AudioPlugin):
     """
     Ultra-fast limiter using pure numpy operations.
     Sacrifices some audio quality for maximum speed.
@@ -147,7 +149,7 @@ class FastLimiter:
         """
         self.threshold = 10 ** (threshold_db / 20.0)
         self.release_factor = release_factor
-        self.gain = 1.0
+        self.gain = 0.02
 
     def process_sound(self, sound):
         """Apply ultra-fast limiting using vectorized operations."""
@@ -187,7 +189,7 @@ class FastLimiter:
         return output
 
 
-class SimpleLimiter:
+class SimpleLimiter(AudioPlugin):
     """
     A simpler, more CPU-efficient limiter with basic peak detection.
     Good balance between speed and quality.

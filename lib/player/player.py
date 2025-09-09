@@ -57,6 +57,10 @@ class Player:
             signature_key: signature of the song
             metadata: any metadata {}
         """
+
+        if pygame.mixer.get_init() is None:
+            self.start_mixer()
+
         print(f"Playing {signature_key} at {self.bpm} BPM...")
 
         self.currently_playing = signature_key
@@ -157,7 +161,8 @@ class Player:
                 elif event['type'] == 'drum':
                     self.drums_channel.play(sound)
             else:
-                print(f"{event['name']} Sound not found")
+                pass
+                # print(f"{event['name']} Sound not found")
 
         # Add a final wait at the end of the song to ensure all notes are played
         total_beats = len(narrative_data) * 4
