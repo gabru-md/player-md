@@ -80,7 +80,7 @@ class MediaProvider:
                     self.log.info(f"Currently producing {self.currently_producing_key}")
                     narrative_data, signature_key = self.generator.generate(
                         key=self.currently_producing_key,
-                        bars=3)
+                        bars=6)
 
                     self.narrative_data_queue.put(MediaInfo(narrative_data, signature_key))
                     self.num_of_narratives_produced += 1
