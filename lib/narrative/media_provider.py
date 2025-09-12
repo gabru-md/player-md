@@ -7,7 +7,7 @@ from lib.narrative.media_info import MediaInfo
 from lib.narrative.narrative_generator import NarrativeGenerator
 from lib.log import Logger
 
-PRODUCER_SLEEP_TIME = 180  # seconds
+PRODUCER_SLEEP_TIME = 30  # seconds
 
 
 def get_keys(keys_str):
