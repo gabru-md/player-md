@@ -94,13 +94,13 @@ class Player:
 
             self.playing = True
             bar_start_beat = bar_index * 4
-
-            for bass_note, beat_offset in bar_data.bass:
-                event_list.append({
-                    'type': 'bass',
-                    'name': bass_note,
-                    'beat_time': bar_start_beat + beat_offset
-                })
+            if bar_data.bass:
+                for bass_note, beat_offset in bar_data.bass:
+                    event_list.append({
+                        'type': 'bass',
+                        'name': bass_note,
+                        'beat_time': bar_start_beat + beat_offset
+                    })
 
             # Add all chord events for this bar to the event list
             # We now assume bar_data.chords is a list of tuples: [('chord_name', beat_offset)]

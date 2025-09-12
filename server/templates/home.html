@@ -246,56 +246,54 @@
     };
 
     // Circle of Fifths color mapping - Based on your Keys class
-    // Circle of Fifths color mapping - Based on your Keys class
     const keyColorMap = {
-        // Major keys from your Keys class
-        'C': 'key-c', 'CMajor': 'key-c',
-        'G': 'key-g', 'GMajor': 'key-g',
-        'D': 'key-d', 'DMajor': 'key-d',
-        'A': 'key-a', 'AMajor': 'key-a',
-        'E': 'key-e', 'EMajor': 'key-e',
-        'B': 'key-b', 'BMajor': 'key-b',
-        'F#': 'key-fs', 'FSharpMajor': 'key-fs',
-        'C#': 'key-cs', 'CSharpMajor': 'key-cs',
-        'G#': 'key-gs', 'GSharpMajor': 'key-gs',
-        'D#': 'key-ds', 'DSharpMajor': 'key-ds',
-        'A#': 'key-as', 'ASharpMajor': 'key-as',
-        'F': 'key-f', 'FMajor': 'key-f',
+        // Major keys
+        'C': 'key-c', 'CMajor': 'key-c', 'C_maj': 'key-c', 'c': 'key-c',
+        'G': 'key-g', 'GMajor': 'key-g', 'G_maj': 'key-g', 'g': 'key-g',
+        'D': 'key-d', 'DMajor': 'key-d', 'D_maj': 'key-d', 'd': 'key-d',
+        'A': 'key-a', 'AMajor': 'key-a', 'A_maj': 'key-a', 'a': 'key-a',
+        'E': 'key-e', 'EMajor': 'key-e', 'E_maj': 'key-e', 'e': 'key-e',
+        'B': 'key-b', 'BMajor': 'key-b', 'B_maj': 'key-b', 'b': 'key-b',
+        'F#': 'key-fs', 'FSharpMajor': 'key-fs', 'FSharp_maj': 'key-fs', 'f#': 'key-fs',
+        'C#': 'key-cs', 'CSharpMajor': 'key-cs', 'CSharp_maj': 'key-cs', 'c#': 'key-cs',
+        'G#': 'key-gs', 'GSharpMajor': 'key-gs', 'GSharp_maj': 'key-gs', 'g#': 'key-gs',
+        'D#': 'key-ds', 'DSharpMajor': 'key-ds', 'DSharp_maj': 'key-ds', 'd#': 'key-ds',
+        'A#': 'key-as', 'ASharpMajor': 'key-as', 'ASharp_maj': 'key-as', 'a#': 'key-as',
+        'F': 'key-f', 'FMajor': 'key-f', 'F_maj': 'key-f', 'f': 'key-f',
+        // Enharmonic equivalents
+        'Eb': 'key-ds', 'EFlatMajor': 'key-ds', 'eb': 'key-ds',
+        'Bb': 'key-as', 'BFlatMajor': 'key-as', 'bb': 'key-as',
+        'Ab': 'key-gs', 'AFlatMajor': 'key-gs', 'ab': 'key-gs',
+        'Db': 'key-cs', 'DFlatMajor': 'key-cs', 'db': 'key-cs',
+        'Gb': 'key-fs', 'GFlatMajor': 'key-fs', 'gb': 'key-fs',
 
-        // Minor keys from your Keys class
-        'Am': 'key-am', 'AMinor': 'key-am',
-        'Em': 'key-em', 'EMinor': 'key-em',
-        'Bm': 'key-bm', 'BMinor': 'key-bm',
-        'F#m': 'key-fsm', 'FSharpMinor': 'key-fsm',
-        'C#m': 'key-csm', 'CSharpMinor': 'key-csm',
-        'G#m': 'key-gsm', 'GSharpMinor': 'key-gsm',
-        'D#m': 'key-dsm', 'DSharpMinor': 'key-dsm',
-        'A#m': 'key-asm', 'ASharpMinor': 'key-asm',
-        'EFlatMajor': 'key-ds', 'BFlatMajor': 'key-as',
-        'Fm': 'key-fm', 'FMinor': 'key-fm',
-        'Cm': 'key-cm', 'CMinor': 'key-cm',
-        'Gm': 'key-gm', 'GMinor': 'key-gm',
-        'Dm': 'key-dm', 'DMinor': 'key-dm',
-
-        // Alternative notations (for compatibility)
-        'A_min': 'key-am', 'E_min': 'key-em', 'B_min': 'key-bm',
-        'FSharp_min': 'key-fsm', 'CSharp_min': 'key-csm', 'GSharp_min': 'key-gsm',
-        'D_min':'key-dm', 'D_maj': 'key-d', 'G_maj': 'key-g', 'A_maj': 'key-a',
-        'F_maj': 'key-f',
-        'E_maj': 'key-e', 'B_maj': 'key-b', 'FSharp_maj': 'key-fs', 'ASharp_min': 'key-asm',
-        'CSharp_maj': 'key-cs',
-        'EFlat_maj': 'key-ds', 'AFlat_maj': 'key-gs', 'BFlat_maj': 'key-as', 'DFlat_maj': 'key-cs',
-        'ADim': 'key-csm', 'GSharp_maj': 'key-gs',
-        'G_min': 'key-gm', 'F_min': 'key-fm', 'BFlat_min': 'key-asm',
-        'C_min':'key-cm', 'C_maj': 'key-c',
-        'DSharp_min': 'key-dsm',
-        'DFlat_min': 'key-csm',
+        // Minor keys
+        'Am': 'key-am', 'AMinor': 'key-am', 'A_min': 'key-am', 'am': 'key-am',
+        'Em': 'key-em', 'EMinor': 'key-em', 'E_min': 'key-em', 'em': 'key-em',
+        'Bm': 'key-bm', 'BMinor': 'key-bm', 'B_min': 'key-bm', 'bm': 'key-bm',
+        'F#m': 'key-fsm', 'FSharpMinor': 'key-fsm', 'FSharp_min': 'key-fsm', 'f#m': 'key-fsm',
+        'C#m': 'key-csm', 'CSharpMinor': 'key-csm', 'CSharp_min': 'key-csm', 'c#m': 'key-csm',
+        'G#m': 'key-gsm', 'GSharpMinor': 'key-gsm', 'GSharp_min': 'key-gsm', 'g#m': 'key-gsm',
+        'D#m': 'key-dsm', 'DSharpMinor': 'key-dsm', 'DSharp_min': 'key-dsm', 'd#m': 'key-dsm',
+        'A#m': 'key-asm', 'ASharpMinor': 'key-asm', 'ASharp_min': 'key-asm', 'a#m': 'key-asm',
+        'Fm': 'key-fm', 'FMinor': 'key-fm', 'F_min': 'key-fm', 'fm': 'key-fm',
+        'Cm': 'key-cm', 'CMinor': 'key-cm', 'C_min': 'key-cm', 'cm': 'key-cm',
+        'Gm': 'key-gm', 'GMinor': 'key-gm', 'G_min': 'key-gm', 'gm': 'key-gm',
+        'Dm': 'key-dm', 'DMinor': 'key-dm', 'D_min': 'key-dm', 'dm': 'key-dm',
+        // Enharmonic equivalents
+        'Ebm': 'key-dsm', 'EFlatMinor': 'key-dsm', 'ebm': 'key-dsm',
+        'Bbm': 'key-asm', 'BFlatMinor': 'key-asm', 'bbm': 'key-asm',
+        'Abm': 'key-gsm', 'AFlatMinor': 'key-gsm', 'abm': 'key-gsm',
+        'Dbm': 'key-csm', 'DFlatMinor': 'key-csm', 'dbm': 'key-csm',
+        'Gbm': 'key-fsm', 'GFlatMinor': 'key-fsm', 'gbm': 'key-fsm',
+        // Diminished chords
+        'ADim': 'key-csm', 'adim': 'key-csm',
         // Default
-        'Unknown': 'key-unknown'
+        'Unknown': 'key-unknown', 'unknown': 'key-unknown'
     };
 
     function getKeyColorClass(key) {
-        // Normalize the key string
+        // Normalize the key string by trimming and converting to lowercase for robust lookup
         const normalizedKey = key.trim();
         return keyColorMap[normalizedKey] || 'key-unknown';
     }
@@ -339,20 +337,30 @@
         const visualizer = document.getElementById('signature-visualizer');
         visualizer.innerHTML = ''; // Clear existing visual
 
-        if (song.key && song.key !== 'Unknown') {
-            const bars = key.split('_^_');
-            bars.forEach(barStr => {
-                const parts = barStr.split(':');
-                if (parts[0]) {
-                    const firstChord = parts[0].split(',')[0].replace(/_chord|-.*$/, '').trim();
-                    const barDiv = document.createElement('div');
-                    const color = getKeyColorClass(firstChord);
-                    barDiv.className = `w-4 h-4 rounded-sm ${color}`;
-                    barDiv.title = firstChord;
-                    visualizer.appendChild(barDiv);
-                }
-            });
+        // Check for the old format (e.g., "C_maj-0.0") to distinguish
+        const isOldFormat = key.includes('^_') && key.includes('_chord');
+        let bars;
+        if (isOldFormat) {
+            bars = key.split('_^_');
+        } else {
+            // New format parsing
+            bars = key.split('^');
         }
+
+        bars.forEach(barStr => {
+            const parts = barStr.split(':');
+            // Chords are always the first part if they exist
+            if (parts[0]) {
+                const firstChordWithOffset = parts[0].split(',')[0];
+                const firstChord = firstChordWithOffset.split('@')[0]; // Get name before offset
+
+                const barDiv = document.createElement('div');
+                const color = getKeyColorClass(firstChord);
+                barDiv.className = `w-4 h-4 rounded-sm ${color}`;
+                barDiv.title = firstChord;
+                visualizer.appendChild(barDiv);
+            }
+        });
 
         // Show song details panel
         document.getElementById('song-details').classList.remove('hidden');
@@ -453,11 +461,20 @@
                 const visualizerDiv = document.createElement('div');
                 visualizerDiv.className = 'flex flex-wrap gap-1 flex-grow justify-end';
 
-                const bars = key.split('_^_');
+                // Check for the old format to distinguish
+                const isOldFormat = key.includes('^_') && key.includes('_chord');
+                let bars;
+                if (isOldFormat) {
+                    bars = key.split('_^_');
+                } else {
+                    bars = key.split('^');
+                }
+
                 bars.forEach(barStr => {
                     const parts = barStr.split(':');
                     if (parts[0]) {
-                        const firstChord = parts[0].split(',')[0].replace(/_chord|-.*$/, '').trim();
+                        const firstChordWithOffset = parts[0].split(',')[0];
+                        const firstChord = firstChordWithOffset.split('@')[0];
                         const barDiv = document.createElement('div');
                         const color = getKeyColorClass(firstChord);
                         barDiv.className = `w-2 h-2 rounded-sm ${color}`;
