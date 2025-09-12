@@ -3,8 +3,8 @@ import threading
 import time
 import queue
 from lib.keys import Keys
-from lib.narrative.media_info import MediaInfo
-from lib.narrative.narrative_generator import NarrativeGenerator
+from lib.media.media_info import MediaInfo
+from lib.media.narrative.narrative_generator import NarrativeGenerator
 from lib.log import Logger
 
 PRODUCER_SLEEP_TIME = 30  # seconds
@@ -78,9 +78,9 @@ class MediaProvider:
                     self.currently_producing_key_class = self.get_next_key_class()
                     self.currently_producing_key = self.currently_producing_key_class()
                     self.log.info(f"Currently producing {self.currently_producing_key}")
-                    narrative_data, signature_key = self.generator.generate_narrative(
+                    narrative_data, signature_key = self.generator.generate(
                         key=self.currently_producing_key,
-                        bars=8)
+                        bars=3)
 
                     self.narrative_data_queue.put(MediaInfo(narrative_data, signature_key))
                     self.num_of_narratives_produced += 1

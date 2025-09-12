@@ -1,8 +1,6 @@
-import random
-
 from lib.log import Logger
-from lib.narrative.media_info import MediaInfo
-from lib.narrative.media_provider import MediaProvider
+from lib.media.media_info import MediaInfo
+from lib.media.media_provider import MediaProvider
 from lib.player.player import Player
 import argparse
 from server.server import create_app
@@ -54,9 +52,9 @@ def main():
                                       signature_key=media_info.signature_key,
                                       metadata=metadata)
 
-                # log how many times the media is played
-                log.info(f"[{played_so_far + 1}/{total_number_of_plays}] played")
-                played_so_far += 1
+                    # log how many times the media is played
+                    log.info(f"[{played_so_far + 1}/{total_number_of_plays}] played")
+                    played_so_far += 1
 
         except InterruptedError as e:
             log.exception(e)

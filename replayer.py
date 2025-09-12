@@ -2,7 +2,7 @@ import argparse
 import json
 
 from lib.player.player import Player
-from lib.signature import parse_signature_key
+from lib.media.narrative.signature import parse_signature_key
 
 
 def main():

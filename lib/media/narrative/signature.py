@@ -1,4 +1,4 @@
-from lib.bar import Bar
+from lib.media.narrative.bar import Bar
 import base64
 import json
 
