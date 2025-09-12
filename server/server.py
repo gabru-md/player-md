@@ -19,14 +19,15 @@ def create_app(player: Player, replayer: Player = None, player_task=None, radio_
     @app.route("/")
     def home():
         all_json_history = player.history_manager.load_history()
+        all_history_size = 0
 
         if all_json_history is not None:
             sorted_history = sorted(
                 all_json_history.items(),
-                key=lambda item: (item[1].get('liked', False), item[1].get('played', 0)),
+                key=lambda item: item[1].get('lastPlayed'),
                 reverse=True
             )
-
+            all_history_size = len(all_json_history)
             number_of_songs_to_display = 15
             top_n_history = dict(sorted_history[:number_of_songs_to_display])
         else:
@@ -65,7 +66,8 @@ def create_app(player: Player, replayer: Player = None, player_task=None, radio_
                 'playing': player.playing
             })
 
-        return render_template('home.html', history=top_n_history, current_history=current_history,
+        return render_template('home.html', history=top_n_history, all_history_size=all_history_size,
+                               current_history=current_history,
                                currently_playing=currently_playing, currently_playing_key=currently_playing_key,
                                player_name=player_name, radio_stats=radio_stats)
 

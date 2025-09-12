@@ -76,7 +76,7 @@
             </div>
 
             <div class="bg-gray-800 rounded-xl p-6 shadow-xl">
-                <h2 class="text-2xl font-bold text-gray-200 mb-4">Recent History</h2>
+                <h2 class="text-2xl font-bold text-gray-200 mb-4">Recent History ({{ current_history|length }})</h2>
                 <div class="h-[30rem] overflow-y-scroll hide-scrollbar">
                     <div id="current-history-list" class="space-y-2">
                         {% if current_history %}
@@ -87,7 +87,7 @@
                                     <div class="w-12 h-12 rounded-lg flex items-center justify-center album-cover" data-key="{% if song.key %}{{ song.key }}{% else %}Unknown{% endif %}">
                                         <i class="fa-solid fa-music text-xl text-white"></i>
                                     </div>
-                                    <span class="flex-grow text-sm sm:text-base truncate">{{ key.split('-')[0] }}</span>
+                                    <span class="flex-grow text-sm sm:text-base truncate">{{ song.key }}</span>
                                 </div>
                                 <div class="flex items-center space-x-2 ml-4">
                                     <span class="text-xs text-gray-400 whitespace-nowrap">{{ song.played }} plays</span>
@@ -194,7 +194,7 @@
 
 
         <div id="history-section" class="lg:col-span-1 bg-gray-800 rounded-xl p-6 shadow-xl h-full">
-            <h2 class="text-2xl font-bold text-gray-200 mb-4">History</h2>
+            <h2 class="text-2xl font-bold text-gray-200 mb-4">History ({{ all_history_size }})</h2>
             <div class="h-[40rem] overflow-y-scroll hide-scrollbar">
                 <div id="history-list" class="space-y-2">
                     {% if history %}
@@ -316,6 +316,7 @@
 
     function selectSong(key) {
         selectedSongKey = key;
+        console.log(historyData);
         const song = historyData[key];
 
         console.log(song);

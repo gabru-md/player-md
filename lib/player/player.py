@@ -64,12 +64,12 @@ class Player:
         if pygame.mixer.get_init() is None:
             self.start_mixer()
 
-        self.log.info(f"Playing {signature_key} at {self.bpm} BPM...")
-
         self.currently_playing = signature_key
         if metadata:
             if 'key' in metadata:
                 self.currently_playing_key = metadata['key']
+
+        self.log.info(f"Playing {self.currently_playing_key} at {self.bpm} BPM...")
 
         start_time_ms = pygame.time.get_ticks()
 

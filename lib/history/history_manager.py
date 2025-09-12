@@ -1,22 +1,35 @@
 import json
 import os
+from datetime import datetime
+
+from lib.log import Logger
 
 
 class HistoryManager:
 
-    def __init__(self):
+    def __init__(self, max_local_history_size=10):
         self.history_folder = "history"
         self.history_file = "history.json"
         self.history = {}
+        self.max_local_history_size = max_local_history_size
+        self.log = Logger.get_log(self.__class__.__name__)
 
     def add_to_history(self, signature_key, musical_key=None):
+
+        if len(self.history) == self.max_local_history_size:
+            self.save_history()
+
+        if signature_key in self.history:
+            return
+
         base_history_object = {
             'signature_key': signature_key,
             'key': musical_key,
             'played': 0,
             'liked': False,
             'disliked': False,
-            'tags': []
+            'tags': [],
+            'lastPlayed': None
         }
 
         self.history[signature_key] = base_history_object
@@ -37,6 +50,7 @@ class HistoryManager:
         if signature_key not in self.history:
             self.add_to_history(signature_key)
         self.history[signature_key]['played'] += 1
+        self.history[signature_key]['lastPlayed'] = str(datetime.now())
 
     def add_tag(self, signature_key, tag):
         if signature_key not in self.history:
@@ -85,6 +99,9 @@ class HistoryManager:
 
                 historical_item_data['tags'] = historical_item_data['tags'] + data['tags']
 
+                if data['lastPlayed']:
+                    historical_item_data['lastPlayer'] = data['lastPlayed']
+
                 historical_data[signature_key] = historical_item_data
             else:
                 historical_data[signature_key] = data
@@ -92,5 +109,5 @@ class HistoryManager:
         with open(history_file_path, 'w') as file:
             json.dump(historical_data, file)
 
-        print("dumped to history file successfully")
+        self.log.info("Dumped to history file successfully")
         self.history = {}
