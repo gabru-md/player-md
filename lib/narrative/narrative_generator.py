@@ -80,21 +80,22 @@ class NarrativeGenerator:
             ([], [0, 1, 2, 3]),
             ([], [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5]),
             ([0, 1, 2, 3], []),
-            ([], [])
+            ([], []),
+            ([0, 0.25, 2, 2.25], [1, 1.25, 3, 3.25])
         ]
 
         self.bass_rhythm_patterns = [
-            [0],
-            [1],
-            [2],
-            [3],
+            # [0],
+            # [1],
+            # [2],
+            # [3],
             [0, 1],
             [0, 2],
             [1, 2, 2.5],
             [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5]
         ]
 
-    def generate_narrative(self, key, bars=8, enable_drums=True, enable_bass=True):
+    def generate_narrative(self, key, bars=8, enable_drums=False, enable_bass=False):
         """
         Generates a list of Bar objects, each containing a chord and
         the melody notes with their specific rhythms for that bar.
@@ -113,9 +114,8 @@ class NarrativeGenerator:
         bass_note = None
 
         if enable_bass:
-            bass_rhythm = random.choice(self.bass_rhythm_patterns) # bass remains fixed
+            bass_rhythm = random.choice(self.bass_rhythm_patterns)  # bass remains fixed
             bass_note = get_bass_note(key.notes[0])
-
 
         drums = None
         if enable_drums:
@@ -135,7 +135,6 @@ class NarrativeGenerator:
             safe_chord_degree = min(chord_degree, len(chords_in_key) - 1)
             chord_progression.append(chords_in_key[safe_chord_degree])
 
-        print(f"{bass_note} : {key.notes[0]} bass note")
         # --- Section 1: Conversation (Bars 1-2) ---
         for bar in range(2):
             # Select a random rhythm pattern for each bar
@@ -189,13 +188,15 @@ class NarrativeGenerator:
 
         return narrative_data, make_signature_key(narrative_data)
 
+
 def convert_chords_into_bass_line(chords):
     bass_line = []
     for chord, _ in chords:
         bass_note = get_bass_note(chord)
         if bass_note:
-            bass_line.append((bass_note, ))
+            bass_line.append((bass_note,))
     return bass_line
+
 
 def get_bass_note(note):
     key_note = note.split('_')[0]
@@ -212,6 +213,7 @@ def get_bass_note(note):
 
     selected_bass_key = random.choice(available_notes)
     return selected_bass_key
+
 
 def get_note(note, suffix):
     return note + suffix

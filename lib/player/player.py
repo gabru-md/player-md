@@ -2,6 +2,7 @@ import time
 from enum import Enum
 
 from lib.history.history_manager import HistoryManager
+from lib.log import Logger
 from lib.player.sample_loader import load_samples
 
 import pygame
@@ -29,6 +30,8 @@ class Player:
         self.bpm = bpm
         self.beat_duration_ms = (60 / bpm) * 1000
         self.phase_shift_beats = 0
+
+        self.log = Logger.get_log(f"{name}Player")
 
         self.start_mixer()
         # Create separate channels to allow chords and melodies to play simultaneously.
@@ -61,7 +64,7 @@ class Player:
         if pygame.mixer.get_init() is None:
             self.start_mixer()
 
-        print(f"Playing {signature_key} at {self.bpm} BPM...")
+        self.log.info(f"Playing {signature_key} at {self.bpm} BPM...")
 
         self.currently_playing = signature_key
         if metadata:
@@ -117,22 +120,23 @@ class Player:
                     'beat_time': bar_start_beat + beat_offset
                 })
 
-            kicks, hi_hats = bar_data.drums
-            if kicks:
-                for _, beat_offset in kicks:
-                    event_list.append({
-                        'type': 'drum',
-                        'name': 'Kick',
-                        'beat_time': bar_start_beat + beat_offset
-                    })
+            if bar_data.drums:
+                kicks, hi_hats = bar_data.drums
+                if kicks:
+                    for _, beat_offset in kicks:
+                        event_list.append({
+                            'type': 'drum',
+                            'name': 'Kick',
+                            'beat_time': bar_start_beat + beat_offset
+                        })
 
-            if hi_hats:
-                for _, beat_offset in hi_hats:
-                    event_list.append({
-                        'type': 'drum',
-                        'name': 'HiHat',
-                        'beat_time': bar_start_beat + beat_offset
-                    })
+                if hi_hats:
+                    for _, beat_offset in hi_hats:
+                        event_list.append({
+                            'type': 'drum',
+                            'name': 'HiHat',
+                            'beat_time': bar_start_beat + beat_offset
+                        })
 
         # Sort all events by their beat time to ensure correct playback order
         event_list.sort(key=lambda x: x['beat_time'])
@@ -188,7 +192,7 @@ class Player:
     def start_mixer(self):
         global MIXER_RUNNING
         if not MIXER_RUNNING:
-            print(f"{self.name} starting mixer")
+            self.log.info(f"{self.name} starting mixer")
             pygame.mixer.init()
             MIXER_RUNNING = True
 

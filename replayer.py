@@ -24,7 +24,7 @@ def main():
             # update the player's history so it updates
             player.history = history_data
 
-        ordered_history_keys = sorted(history_data.keys())
+        ordered_history_keys = sorted(history_data.key_classes())
         idx_key_map = {}
         for idx, key in enumerate(ordered_history_keys):
             print(f"{idx + 1} : {key}")

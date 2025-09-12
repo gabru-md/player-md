@@ -1,82 +1,13 @@
 import random
 
+from lib.log import Logger
+from lib.narrative.media_info import MediaInfo
+from lib.narrative.media_provider import MediaProvider
 from lib.player.player import Player
-from lib.narrative_generator import NarrativeGenerator
 import argparse
-from lib.keys import get_key_class
 from server.server import create_app
 
-
-def rotate_list_randomly(input_list):
-    if not input_list:
-        return []
-
-    # Get a random number of rotations, from 1 up to the length of the list
-    num_rotations = random.randint(1, len(input_list) - 1)
-
-    # Use list slicing to perform the rotation
-    return input_list[num_rotations:] + input_list[:num_rotations]
-
-
-def get_full_key_name(notation: str) -> str:
-    notation = notation.strip()
-
-    # Check for minor chord suffix 'm'
-    if notation.endswith('m'):
-        chord_type = "Minor"
-        note_part = notation[:-1]
-    else:
-        chord_type = "Major"
-        note_part = notation
-
-    full_note_name = note_part.replace('#', 'Sharp').replace('b', 'Flat')
-
-    full_note_name = full_note_name.capitalize()
-
-    return f"{full_note_name}{chord_type}"
-
-
-def get_keys_to_play(keys_str):
-    harmonic_key_order = [
-        'C',
-        'Am',
-        'G',
-        'Em',
-        'D',
-        'Bm',
-        'A',
-        'F#m',
-        'E',
-        'C#m',
-        'B',
-        'G#m',
-        'F#',
-        'D#m',
-        'C#',
-        'A#m',
-        'G#',
-        'Fm',
-        'Eb',
-        'Cm',
-        'Bb',
-        'Gm',
-        'F',
-        'Dm',
-    ]
-
-    if keys_str == 'harmonious' or keys_str == 'fifths':
-        keys = rotate_list_randomly(harmonic_key_order)
-    else:
-        keys = keys_str.split(',')
-
-    keys_to_play = []
-    for key in keys:
-        full_key_name = get_full_key_name(key)
-        key_class = get_key_class(full_key_name)
-        if key_class is not None:
-            keys_to_play.append(key_class)
-
-    return keys_to_play
+log = Logger.get_log("Radio")
 
 def main():
     parser = argparse.ArgumentParser(description="Generate and play music with custom settings.")
@@ -93,7 +24,9 @@ def main():
 
     args = parser.parse_args()
 
-    generator = NarrativeGenerator()
+    media_provider = MediaProvider(narratives=args.narratives, keys_str=args.keys, max_queue_length=10)
+    media_provider.start_producer_thread()
+
     player = Player(bpm=args.bpm)
 
     radio_stats = {
@@ -108,29 +41,33 @@ def main():
         history_file_name = f"history/{args.history}.json" if args.history is not None else None
         try:
             player.start_mixer()
-            played_so_far = 0
-            for _ in range(args.cycle):
-                keys_to_play = get_keys_to_play(args.keys)
-                total_number_of_plays = args.cycle * len(keys_to_play) * args.narratives * args.repeat
-                for key in [k() for k in keys_to_play]:
-                    for _ in range(args.narratives):
-                        narrative_data, signature_key = generator.generate_narrative(key=key, bars=8, enable_drums=args.drums, enable_bass=args.bass)
-                        for _ in range(args.repeat):
-                            metadata = {'key': key}
-                            player.play_music(narrative_data=narrative_data, signature_key=signature_key,
-                                              metadata=metadata)
-                            played_so_far += 1
-                            print(f"[{played_so_far}/{total_number_of_plays}] played")
+            total_number_of_plays = args.narratives * args.repeat * len(media_provider.key_classes)
+
+            # keep running the cycle of repeating narratives
+            while True:
+                for played_so_far in range(total_number_of_plays):
+                    media_info: MediaInfo = media_provider.get_next_media_info()
+                    metadata = {'key': media_provider.currently_producing_key}
+                    for _ in range(args.repeat):
+                        player.play_music(narrative_data=media_info.narrative_data,
+                                          signature_key=media_info.signature_key,
+                                          metadata=metadata)
+                        log.info(f"[{played_so_far + 1}/{total_number_of_plays}] played")
+
+                # save the history
+                player.save_history(history_file_name)
+
         except InterruptedError as e:
-            print(e)
+            log.exception(e)
             raise e
         finally:
+            # always save the history
             player.save_history(history_file_name)
             player.stop_mixer()
 
     if args.ui:
         app = create_app(player=player, player_task=player_task, radio_stats=radio_stats)
-        app.run(host='0.0.0.0', port=5000, debug=True)
+        app.run(host='0.0.0.0', port=5000)
     else:
         player_task()
 
