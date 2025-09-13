@@ -4,7 +4,7 @@ import time
 from lib.player.player import Player
 from flask import Flask, render_template, request
 
-from lib.media.narrative.signature import parse_signature_key
+from lib.narrative.signature import parse_signature_key
 
 
 def create_app(player: Player, replayer: Player = None, player_task=None, radio_stats=None):

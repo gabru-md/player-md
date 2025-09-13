@@ -206,6 +206,42 @@ class Keys:
                     return attr
         return None
 
+    @staticmethod
+    def get_notes_from_chord(chord_name):
+        chord_notes_map = {
+            'C_maj_chord': ['C_note', 'E_note', 'G_note'],
+            'G_maj_chord': ['G_note', 'B_note', 'D_note'],
+            'A_min_chord': ['A_note', 'C_note', 'E_note'],
+            'F_maj_chord': ['F_note', 'A_note', 'C_note'],
+            'D_min_chord': ['D_note', 'F_note', 'A_note'],
+            'E_min_chord': ['E_note', 'G_note', 'B_note'],
+            'B_maj_chord': ['B_note', 'DSharp_note', 'FSharp_note'],
+            'D_maj_chord': ['D_note', 'FSharp_note', 'A_note'],
+            'E_maj_chord': ['E_note', 'GSharp_note', 'B_note'],
+            'FSharp_min_chord': ['FSharp_note', 'A_note', 'CSharp_note'],
+            'CSharp_min_chord': ['CSharp_note', 'E_note', 'GSharp_note'],
+            'GSharp_min_chord': ['GSharp_note', 'B_note', 'CSharp_note'],
+            'C_min_chord': ['C_note', 'EFlat_note', 'G_note'],
+            'BFlat_maj_chord': ['BFlat_note', 'D_note', 'F_note'],
+            'G_min_chord': ['G_note', 'BFlat_note', 'D_note'],
+
+            # Newly added chords
+            'ASharp_min_chord': ['ASharp_note', 'CSharp_note', 'F_note'],
+            'AFlat_maj_chord': ['AFlat_note', 'C_note', 'EFlat_note'],
+            'BFlat_min_chord': ['BFlat_note', 'DFlat_note', 'F_note'],
+            'B_min_chord': ['B_note', 'D_note', 'FSharp_note'],
+            'DFlat_maj_chord': ['DFlat_note', 'F_note', 'AFlat_note'],
+            'DFlat_min_chord': ['DFlat_note', 'FFlat_note', 'AFlat_note'],
+            'DSharp_min_chord': ['DSharp_note', 'FSharp_note', 'ASharp_note'],
+            'EFlat_maj_chord': ['EFlat_note', 'G_note', 'BFlat_note'],
+            'EFlat_min_chord': ['EFlat_note', 'GFlat_note', 'BFlat_note'],
+            'FSharp_maj_chord': ['FSharp_note', 'ASharp_note', 'CSharp_note'],
+            'GSharp_maj_chord': ['GSharp_note', 'BSharp_note', 'DSharp_note'],
+            'F_min_chord': ['F_note', 'AFlat_note', 'C_note'],
+            # The AFlat_min_chord, B_maj_chord, and DFlat_min_chord seem to be missing
+            'AFlat_min_chord': ['AFlat_note', 'CFlat_note', 'EFlat_note']
+        }
+        return chord_notes_map.get(chord_name, [])
 
 if __name__ == '__main__':
     with open("sample_config.json") as config:

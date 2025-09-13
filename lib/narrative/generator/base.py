@@ -10,5 +10,5 @@ class Generator:
         self.log = Logger.get_log(self.__class__.__name__)
 
     @abstractmethod
-    def generate(self, bar, key):
+    def generate(self, bar, key, *args):
         pass

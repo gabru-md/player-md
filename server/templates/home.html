@@ -339,6 +339,7 @@
 
         // Check for the old format (e.g., "C_maj-0.0") to distinguish
         const isOldFormat = key.includes('^_') && key.includes('_chord');
+        console.log(key)
         let bars;
         if (isOldFormat) {
             bars = key.split('_^_');
@@ -355,6 +356,7 @@
                 const firstChord = firstChordWithOffset.split('@')[0]; // Get name before offset
 
                 const barDiv = document.createElement('div');
+                console.log(barStr)
                 const color = getKeyColorClass(firstChord);
                 barDiv.className = `w-4 h-4 rounded-sm ${color}`;
                 barDiv.title = firstChord;

@@ -1,7 +1,7 @@
-from lib.media.narrative.bar import Bar
-from lib.media.narrative.generator import Generator
-from lib.media.narrative.generator.bar import BarGenerator
-from lib.media.narrative.signature import make_signature_key
+from lib.narrative.bar import Bar
+from lib.narrative.generator.base import Generator
+from lib.narrative.generator.bar import BarGenerator
+from lib.narrative.signature import make_signature_key
 
 
 class NarrativeGenerator(Generator):
@@ -16,7 +16,7 @@ class NarrativeGenerator(Generator):
         super().__init__(config)
         self.bar_generator = BarGenerator(config=config)
 
-    def generate(self, key, bars=8):
+    def generate(self, key, bars=8, *args):
         """
         Generates a list of Bar objects, each containing a chord and
         the melody notes with their specific rhythms for that bar.

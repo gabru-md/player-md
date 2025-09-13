@@ -31,7 +31,7 @@ class Player:
         self.beat_duration_ms = (60 / bpm) * 1000
         self.phase_shift_beats = 0
 
-        self.log = Logger.get_log(f"{name}Player")
+        self.log = Logger.get_log(f"Player - {name}")
 
         self.start_mixer()
         # Create separate channels to allow chords and melodies to play simultaneously.

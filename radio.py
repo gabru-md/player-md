@@ -7,6 +7,7 @@ from server.server import create_app
 
 log = Logger.get_log("Radio")
 
+
 def main():
     parser = argparse.ArgumentParser(description="Generate and play music with custom settings.")
     parser.add_argument("--bars", type=int, default=8, help="The number of bars in the generated song.")
@@ -23,7 +24,8 @@ def main():
 
     args = parser.parse_args()
 
-    media_provider = MediaProvider(narratives=args.narratives, keys_str=args.keys, max_queue_length=10)
+    media_provider = MediaProvider(narratives=args.narratives, keys_str=args.keys, bars=args.bars,
+                                   enable_drums=args.drums, max_queue_length=10)
     media_provider.start_producer_thread()
 
     player = Player(bpm=args.bpm)
@@ -45,7 +47,7 @@ def main():
             # keep running the cycle of repeating narratives
             while True:
                 media_info: MediaInfo = media_provider.get_next_media_info()
-                metadata = {'key': media_provider.currently_producing_key}
+                metadata = {'key': media_info.musical_key}
                 for _ in range(args.repeat):
                     # this is a thread blocking call
                     player.play_music(narrative_data=media_info.narrative_data,
