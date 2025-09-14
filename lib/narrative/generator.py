@@ -1,6 +1,6 @@
 from lib.narrative.bar import Bar
-from lib.narrative.generator.base import Generator
-from lib.narrative.generator.bar import BarGenerator
+from lib.generator.base import Generator
+from lib.generator.bar import BarGenerator
 from lib.narrative.signature import make_signature_key
 
 

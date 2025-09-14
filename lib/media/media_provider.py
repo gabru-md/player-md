@@ -3,11 +3,10 @@ import threading
 import time
 import queue
 
-from numpy.distutils.command.config import config
-
+from lib.generator.arrangement import ArrangementGenerator
 from lib.keys import Keys
 from lib.media.media_info import MediaInfo
-from lib.narrative.narrative_generator import NarrativeGenerator
+from lib.narrative.generator import NarrativeGenerator
 from lib.log import Logger
 
 PRODUCER_SLEEP_TIME = 30  # seconds
@@ -52,8 +51,10 @@ def get_full_key_name(notation: str) -> str:
 
 
 class MediaProvider:
-    def __init__(self, narratives, keys_str, bars=8, max_queue_length=10, enable_drums=False):
+    def __init__(self, narratives, keys_str, bars=8, max_queue_length=10, enable_drums=False, enable_arrangement=True):
         self.generator = NarrativeGenerator(config={'enable_drums': enable_drums})
+        if enable_arrangement:
+            self.generator = ArrangementGenerator(config={'enable_drums': enable_drums})
         self.narrative_data_queue = queue.Queue(maxsize=max_queue_length)
         self.key_classes = get_keys(keys_str)
         self.num_of_narratives = narratives

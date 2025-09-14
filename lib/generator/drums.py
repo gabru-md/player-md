@@ -1,6 +1,6 @@
 import random
 
-from lib.narrative.generator.base import Generator
+from lib.generator.base import Generator
 
 
 class DrumsGenerator(Generator):
