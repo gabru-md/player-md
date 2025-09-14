@@ -47,6 +47,7 @@ class Player:
 
         self.pause = False
         self.playing = False
+        self.skip = False
 
     def play_music(self, narrative_data, signature_key=None, metadata=None):
         """
@@ -143,6 +144,9 @@ class Player:
 
         # Now iterate through the sorted events and play them
         for event in event_list:
+            if self.skip:
+                self.log.info("Skipping this music")
+                return self.cleanup()
             expected_play_time_ms = start_time_ms + (event['beat_time'] * self.beat_duration_ms)
 
             time_to_wait = expected_play_time_ms - pygame.time.get_ticks()
@@ -175,10 +179,13 @@ class Player:
             pygame.time.wait(int(final_wait_time))
 
         self.history_manager.incr_played(signature_key=signature_key)
+        self.cleanup()
 
+    def cleanup(self):
         self.currently_playing = None
         self.currently_playing_key = None
         self.playing = False
+        self.skip = False
 
     def save_history(self, file_name=None):
         self.history_manager.save_history(file_name=file_name)
@@ -201,6 +208,9 @@ class Player:
 
     def dislike(self, signature_key):
         self.history_manager.dislike(signature_key=signature_key)
+
+    def skip_current_media(self):
+        self.skip = True
 
     def set_pause(self):
         self.pause = True

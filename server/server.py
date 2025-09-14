@@ -125,4 +125,9 @@ def create_app(player: Player, replayer: Player = None, player_task=None, radio_
         player.dislike(signature_key)
         return "Ok"
 
+    @app.route('/skip', methods=['POST'])
+    def skip():
+        player.skip_current_media()
+        return "Ok"
+
     return app

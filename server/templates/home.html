@@ -68,6 +68,10 @@
                         {% else %}
                             <p>Playing: {{ currently_playing_key }}</p>
                         {% endif %}
+                        <button onclick="skipSong()"
+                                class="mt-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition-all duration-200">
+                            <i class="fa-solid fa-forward mr-2"></i>Skip
+                        </button>
                     {% else %}
                     <button onclick="playRadio()"><i class="fa-solid fa-play text-5xl mb-4 text-purple-400"></i>
                     </button>
@@ -454,6 +458,22 @@
         selectSong("{{ currently_playing }}")
         {% endif %}
     });
+
+     async function skipSong() {
+        try {
+            const response = await fetch('/skip', {
+                method: 'POST'
+            });
+            const result = await response.text();
+            if(result === "Ok") {
+                console.log("Skipped song");
+            }
+        } catch (error) {
+            console.error('Network or server error', error);
+        } finally {
+            location.reload();
+        }
+    }
 
     function addSignatureVisualizers() {
         const historyItems = document.querySelectorAll('#current-history-list .p-4');
