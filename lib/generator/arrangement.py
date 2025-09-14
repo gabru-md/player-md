@@ -21,6 +21,7 @@ class ArrangementGenerator(Generator):
             ("chorus", 8),
             ("outro", 4)
         ]
+        melody_sections = ['verse', 'chorus']
 
         current_bar = 0
         full_song = []
@@ -35,7 +36,11 @@ class ArrangementGenerator(Generator):
             else:
                 bars = []
                 for _ in range(num_bars):
-                    bar = self.bar_generator.generate(bar=current_bar, key=key)
+                    enable_melody = False
+                    if section_name in melody_sections:
+                        enable_melody = True
+                    bar = self.bar_generator.generate(bar=current_bar, key=key,
+                                                      enable_melody=enable_melody)
                     bars.append(bar)
                     current_bar += 1
                 repeaters[repeater_key] = bars

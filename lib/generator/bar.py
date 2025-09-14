@@ -18,11 +18,13 @@ class BarGenerator(Generator):
         self.bass_generator = None
         self.drums_generator = DrumsGenerator(config)
 
-    def generate(self, bar, key, *args) -> Bar:
+    def generate(self, bar, key, enable_melody=True, *args) -> Bar:
         chords = self.chords_generator.generate(bar=bar, key=key)
         # Get the current bar's chord to pass to the melody generator
         current_bar_chord = chords[0][0] if chords else None
-        melody = self.melody_generator.generate(bar=bar, key=key, current_bar_chord=current_bar_chord)
+        melody = []
+        if enable_melody:
+            melody = self.melody_generator.generate(bar=bar, key=key, current_bar_chord=current_bar_chord)
         if 'enable_drums' in self.config and self.config['enable_drums']:
             kicks, hi_hats = self.drums_generator.generate(bar=bar, key=key)
             return Bar(chords=chords, melody_notes=melody, drums=(kicks, hi_hats))
