@@ -461,9 +461,9 @@
             const key = item.getAttribute('onclick').match(/'([^']+)'/)[1];
             if (key) {
                 const visualizerDiv = document.createElement('div');
-                visualizerDiv.className = 'flex flex-wrap gap-1 flex-grow justify-end';
+                visualizerDiv.className = 'flex flex-row items-end flex-grow justify-start space-x-0.5 min-w-0 h-10'; // Ensure a minimum height for the visualizer
 
-                // Check for the old format to distinguish
+                // Check for the old format (e.g., "C_maj-0.0") to distinguish
                 const isOldFormat = key.includes('^_') && key.includes('_chord');
                 let bars;
                 if (isOldFormat) {
@@ -472,15 +472,29 @@
                     bars = key.split('^');
                 }
 
+                // Calculate the max number of chords in a bar to normalize the height
+                let maxChordsInBar = 0;
                 bars.forEach(barStr => {
-                    const parts = barStr.split(':');
-                    if (parts[0]) {
-                        const firstChordWithOffset = parts[0].split(',')[0];
+                    const chords = barStr.split(':');
+                    maxChordsInBar = Math.max(maxChordsInBar, chords.length);
+                });
+
+                bars.forEach(barStr => {
+                    const chords = barStr.split(':');
+                    if (chords.length > 0) {
+                        const firstChordWithOffset = chords[0].split(',')[0];
                         const firstChord = firstChordWithOffset.split('@')[0];
                         const barDiv = document.createElement('div');
                         const color = getKeyColorClass(firstChord);
-                        barDiv.className = `w-2 h-2 rounded-sm ${color}`;
-                        barDiv.title = firstChord;
+
+                        // Calculate height based on the number of chords in the bar
+                        const heightPercentage = (chords.length / maxChordsInBar) * 100;
+                        const barHeightClass = `h-[${Math.max(10, heightPercentage)}%]`; // Ensure a minimum height of 10%
+
+                        // Use a tiny, pill-shaped design
+                        barDiv.className = `w-1 rounded-full ${color} transition-all duration-200`;
+                        barDiv.style.height = `${Math.max(10, heightPercentage)}%`; // Set height dynamically
+                        barDiv.title = `Bar: ${barStr}`; // Show full bar details on hover
                         visualizerDiv.appendChild(barDiv);
                     }
                 });
@@ -493,6 +507,5 @@
             }
         });
     }
-
 </script>
 </html>
