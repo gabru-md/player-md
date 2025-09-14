@@ -25,10 +25,20 @@ class ArrangementGenerator(Generator):
         current_bar = 0
         full_song = []
 
+        repeaters = {}
+
         for section_name, num_bars in song_structure:
-            for _ in range(num_bars):
-                bar = self.bar_generator.generate(bar=current_bar, key=key)
-                full_song.append(bar)
-                current_bar += 1
+            repeater_key = f"{section_name}_{num_bars}"
+            if key in repeaters:
+                full_song.extend(repeaters[repeater_key])
+
+            else:
+                bars = []
+                for _ in range(num_bars):
+                    bar = self.bar_generator.generate(bar=current_bar, key=key)
+                    bars.append(bar)
+                    current_bar += 1
+                repeaters[repeater_key] = bars
+                full_song.extend(bars)
 
         return full_song, make_signature_key(full_song)
