@@ -160,7 +160,7 @@ class Player:
                     self.bass_channel.stop()
                     self.bass_channel.play(sound)
                 elif event['type'] == 'chord':
-                    self.chords_channel.queue(sound)
+                    self.chords_channel.play(sound)
                     # print(f"Chord: {event['name']}")
                 elif event['type'] == 'melody':
                     self.melody_channel.queue(sound)
