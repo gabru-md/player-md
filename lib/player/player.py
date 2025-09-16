@@ -139,8 +139,9 @@ class Player:
                             'beat_time': bar_start_beat + beat_offset
                         })
 
+        type_order = {'chord': 0, 'melody': 1, 'drum': 2, 'bass': 3}
         # Sort all events by their beat time to ensure correct playback order
-        event_list.sort(key=lambda x: x['beat_time'])
+        event_list.sort(key=lambda x: (x['beat_time'], type_order.get(x['type'], 99)))
 
         # Now iterate through the sorted events and play them
         for event in event_list:
@@ -159,12 +160,10 @@ class Player:
                     self.bass_channel.stop()
                     self.bass_channel.play(sound)
                 elif event['type'] == 'chord':
-                    self.melody_channel.stop()  # to counter overlap
-                    self.chords_channel.play(sound)
+                    self.chords_channel.queue(sound)
                     # print(f"Chord: {event['name']}")
                 elif event['type'] == 'melody':
-                    self.melody_channel.stop()  # to counter overlap
-                    self.melody_channel.play(sound)
+                    self.melody_channel.queue(sound)
                     # print(f"  Note: {event['name']}")
                 elif event['type'] == 'drum':
                     self.drums_channel.play(sound)
@@ -220,3 +219,7 @@ class Player:
 
     def is_playing(self):
         return self.playing
+
+    def set_bpm(self, bpm):
+        self.bpm = bpm
+        self.beat_duration_ms = (60 / bpm) * 1000

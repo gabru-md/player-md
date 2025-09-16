@@ -1,5 +1,6 @@
 import threading
 import time
+from crypt import methods
 
 from lib.player.player import Player
 from flask import Flask, render_template, request
@@ -24,7 +25,7 @@ def create_app(player: Player, replayer: Player = None, player_task=None, radio_
         if all_json_history is not None:
             sorted_history = sorted(
                 all_json_history.items(),
-                key=lambda item: item[1].get('lastPlayed'),
+                key=lambda item: item[1].get('lastPlayed') if item[1].get('lastPlayed') is not None else '0',
                 reverse=True
             )
             all_history_size = len(all_json_history)
@@ -128,6 +129,14 @@ def create_app(player: Player, replayer: Player = None, player_task=None, radio_
     @app.route('/skip', methods=['POST'])
     def skip():
         player.skip_current_media()
+        return "Ok"
+
+    @app.route('/bpm', methods=['POST'])
+    def set_bpm():
+        json_data = request.json
+        bpm = json_data['bpm']
+        player.set_bpm(bpm)
+        replayer.set_bpm(bpm)
         return "Ok"
 
     return app

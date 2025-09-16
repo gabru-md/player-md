@@ -151,7 +151,8 @@
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-400">BPM:</span>
-                        <span id="radio-bpm" class="text-white font-semibold">{{ radio_stats.bpm if radio_stats else '-' }}</span>
+                        <input type="number" id="bpm-input" value="{{ radio_stats.bpm if radio_stats else 72 }}" min="1" max="300"
+                               class="w-20 bg-gray-700 text-white text-center rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" onchange="setBPM()">
                     </div>
                     <div class="flex justify-between">
                         <span class="text-sm text-gray-400">Narratives:</span>
@@ -447,6 +448,34 @@
             console.error('Network or server error', error);
         } finally {
             location.reload();
+        }
+    }
+
+    async function setBPM() {
+        const bpmInput = document.getElementById('bpm-input');
+        const bpmValue = parseInt(bpmInput.value);
+
+        if (isNaN(bpmValue) || bpmValue < 1 || bpmValue > 300) {
+            alert("Please enter a valid BPM between 1 and 300.");
+            return;
+        }
+
+        try {
+            const response = await fetch('/bpm', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ bpm: bpmValue })
+            });
+            const result = await response.text();
+            if(result === "Ok") {
+                console.log("BPM updated successfully.");
+                // Update the displayed BPM value
+                document.getElementById('radio-bpm').textContent = bpmValue;
+            }
+        } catch (error) {
+            console.error('Network or server error', error);
         }
     }
 

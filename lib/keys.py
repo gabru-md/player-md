@@ -12,7 +12,7 @@ class Keys:
         def __init__(self):
             self.chords = ['C_maj_chord', 'G_maj_chord', 'A_min_chord', 'F_maj_chord', 'D_min_chord',
                            'E_min_chord']
-            self.notes = ['C_note', 'E_note', 'G_note', 'C5_note', 'C_E_slide_note', 'E_G_slide_note']
+            self.notes = ['C_note', 'E_note', 'G_note', 'C5_note']
 
     class GMajor(_KeyBase):
         def __init__(self):

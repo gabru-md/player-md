@@ -2,7 +2,6 @@ import pygame
 import json
 
 from lib.audio.compressor import Compressor, MultibandCompressor
-from lib.audio.crop import CropPlugin
 from lib.audio.equalizer import Equalizer
 from lib.audio.filter import FilterPresets
 from lib.audio.limiter import FastLimiter
